@@ -1,0 +1,170 @@
+**-Unhide-**
+               http://www.unhide-forensics.info
+
+Unhide es una herramienta forense que permite descubrir procesos y puertos TCP/UDP ocultos
+por rootkits / LKMs o cualquier otra tecnica de ocultacion.
+
+
+// Unhide (unhide-linux o unhide-posix)
+// -------------------------------------
+
+Permite identificar procesos que hayan sido ocultados. Implementa seis tecnicas:
+
+1- Comparacion de la informacion obtenida por /bin/ps frente a los directorios en /proc
+
+2- Comparacion de la informacin obtenida de /bin/ps contra la estructura de directorios de /proc
+  SOLO para la versión "unhide-linux"
+
+3- Comparacion de la informacion visible por /bin/ps frente a la que se puede obtener
+ utilizando diversas sycalls del sistema (syscall scanning).
+
+4- Busqueda de incoherencias entre el resultado de /bin/ps y la informacion obtenida en /proc y syscall scanning (Reverse scanning)
+  SOLO para la versión "unhide-linux"
+
+5- Ocupacion por fuerta bruta del espacio de PIDs disponibles en el sistema (PIDs bruteforcing)
+  SOLO para la versión "unhide-linux"
+
+6- Escaneo 'rapido' de informacion usando /proc procfs y syscalls
+  SOLO para la versión "unhide-linux". Es un test notablemente más rápido que usar de forma independiente los test 1/2/3 pero
+  mas propenso a dar falsos positivos
+
+// Unhide_rb
+// ---------
+
+Es un port en el lenguaje de programación C de unhide.rb, proyecto alternativo a Unhide
+Como el original, es tan solo una aproximación ligera de Unhide
+
+- El hace solo tres test (kill, opendir y chdir)
+- Tan solo ejecuta /bin/ps al iniciar el escaneo y para el check doble
+- Los tests realizados son mucho menos fiables (por ejemplo usar los valores de retorno en vez de errno)
+- Los procesos son identificados tan solo por su ejecutable (unhide-linux también usa cmdline y 'sleeping kernel process')
+- No obstante, incorpora unos pocos métodos anti-fallos, (fallos al usar popen por ejemplo)
+- No tiene capacidad de logging
+
+Es bastante rápido, unas 80 veces más rápido que usar 'unhide-linux quick reverse'
+
+// Unhide-TCP
+
+Permite identificar puertos TCP/UDP que esten a la escucha pero no aparezcan listados
+en /bin/netstat o sbin/ss, usa dos métodos:
+- Fuerza bruta sobre todo el rango de puertos TCP/UDP disponibles y comparándolos con la salida de los comandos SS/netstat
+- Probando todos los puertos TCP/UDP que no lista netstat
+
+// Ficheros
+
+unhide-linux.c      --> Procesos ocultos, Linux 2.6.x
+unhide-linux.h
+
+unhide-tcp.c        --> Puertos tcp/udp ocultos
+unhide-tcp-fast.c
+unhide-tcp.h
+
+unhide-output.c     --> Rutinas de uso para Unhide
+unhide-output.h
+
+
+
+unhide_rb.c         --> un port en C de unhide.rb (una versión muy simplificada de unhide-linux en Ruby)
+
+unhide-posix.c      --> Procesos ocultos, Sistemas Unix (*BSD, solaris, linux 2.2, linux 2.4) No incorpora
+                        PIDs bruteforcing, Necesita mas testing. Atención: Esta es una versión desactualizada de Unhide solo para sistemas antiguos
+
+changelog           -- El log de cambios de Unhide
+
+COPYING             -- Fichero de licencia, GNU GPL V3
+
+LISEZ-MOI.TXT       -- Versión francesa de este fichero
+
+NEWS                -- Novedades relacionadas con las versiones
+
+README.txt          -- Versión inglesa de este fichero
+
+sanity.sh           -- Fichero para realizar tests de funcionamiento
+
+TODO                -- Cosas pendientes de hacer (¿Algún voluntario?)
+
+man/unhide.8        -- Página man en inglés
+
+man/unhide-tcp.8    -- Página man de unhide-tcp en inglés
+
+man/fr/unhide.8     -- Página man en Francés de unhide
+
+man/fr/unhide-tcp.8 --  Página man en Francés de unhide-tcp
+
+man/es/unhide.8    -- Página man de unhide en Español
+
+man/es/unhide-tcp.8 --Página man de unhide-tcp en Español
+
+
+// Compilación
+
+Para compilar Unhide es necesario:
+   glibc-devel
+   glibc-static-devel
+   
+Y las siguientes dependencias:
+- unhide-tcp para linux :
+   iproute2
+   net-tools (para netstat)
+   lsof
+   psmisc (para fuser)
+- unhide-tcp para freeBSD :
+   sockstat
+   lsof
+   netstat
+   
+unhide-linux, unhide-posix, unhide_rb :
+   procps
+
+Si estás usando un kernel de Linux > = 2.6
+   gcc -Wall -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
+   gcc -Wall -O2 --static unhide_rb.c -o unhide_rb
+   gcc -Wall -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c  -o unhide-tcp
+   ln -s unhide unhide-linux
+
+Si no,(Linux < 2.6, *BSD, Solaris and other Unix)
+    gcc --static unhide-posix.c -o unhide-posix
+    ln -s unhide unhide-posix
+
+// Utilización
+
+TIENE QUE SER root para usar unhide
+
+
+Ejemplos:
+
+ # ./unhide-linux  -vo quick reverse
+ # ./unhide-linux  -vom procall sys
+ # ./unhide_rb
+
+ # ./unhide-tcp  -flov
+ # ./unhide-tcp  -flovs
+
+
+// Licencia
+
+GPL V.3 (http://www.gnu.org/licenses/gpl-3.0.html)
+
+// Agradecimientos
+
+A. Ramos (aramosf@unsec.net) Por aportar algunas expresiones regulares
+
+unspawn (unspawn@rootshell.be) Soporte en CentOS
+
+Martin Bowers (Martin.Bowers@freescale.com) Soporte en CentOS
+
+Lorenzo Martinez (lorenzo@lorenzomartinez.homeip.net) Por aportar varias ideas y betatesting
+
+Francois Marier (francois@debian.org) Por crear las paginas man y dar soporte en Debian
+
+Johan Walles (johan.walles@gmail.com) Por encontrar y solucionar un importante fallo del tipo "condicion de carrera"
+
+Jan Iven (jan.iven@cern.ch) Por sus magníficas mejoras, nuevos tests y bugfixing
+
+P. Gouin (pg.bug.cvs.pgn@free.fr) Por su increible trabajo 'fixeando' bugs y mejorando el rendimiento
+
+François Boisson por su idea de un doble control en el test 'brute'
+
+Leandro Lucarella (leandro.lucarella@sociomantic.com) por el modo de escaneo rápido y la re-escritura de unhide-tcp
+
+Nikos Ntarmos (ntarmos@ceid.upatras.gr) Por su inestimable labor ayudando a portar Unhide a FreeBSD y por hacer el empaquetado para FreeBSD.

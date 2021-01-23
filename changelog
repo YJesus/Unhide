@@ -1,0 +1,370 @@
+2013-05-26
+  unhide-posix.c
+  - Transform 'ret' in global variable to avoid warnings
+    (note: ret variable was added to avoid warnings with some over pedantic 
+     version of glibc and is otherwise useless).
+
+2013-05-24
+  unhide-tcp.8 (spanish version), LEEME.txt
+  - update according to english version.
+
+2013-03-03
+  unhide-posix.c
+  - Bugfix : Correct app name in banner of unhide-posix.
+  
+  unhide-tcp.c
+  - Continue to simplify packager job: 
+      * on FreeBSD use sockstat instead of fuser, which doesn't show info on internet socket
+        on this system.
+
+  README.txt, LISEZ-MOI.txt
+  - Add list of build-requires and use-requires
+  
+  unhide-tcp.8 (french and english version)
+  - Add notes upon FreeBSD.
+  
+2013-02-03
+  unhide-output.h
+  - Bugfix : include <stdarg.h>, some old glibc need it
+  
+  unhide-posix.c, unhide-output.c, unhide-tcp.c
+  - Simplify packager job: 
+      * put OS specific command between #ifdef (they were previously commented), 
+      * don't use ss by default in unhide-tcp if OS is not linux,
+      * on FreeBSD use sockstat instead of fuser, which doesn't show info on internet socket
+        on this system.
+  
+  make_tarball.sh
+  - Change '_' to '-' in the name of the tarball
+  - Make sure that unhide files are in a unhide-YYYYMMDD directory.
+
+2012-12-29
+  Promote unhide-tcp-double_check.c as official version of unhide-tcp. Old version 
+  is still available as unhide-tcp-simple-check.c
+  
+  unhide-linux, unhide-posix, unhide-tcp, unhide-tcp-simple-check, unhide_rb :
+  - update date of the version for official release.
+  
+
+2012-12-18
+  unhide-linux, unhide-posix, unhide-tcp, unhide_rb :
+  - update date of the version
+  unhide-tcp :
+  - Suppress 1 warning with some over pedantic version of glibc. 
+
+2012-12-12
+  unhide-linux :
+  - In unhide-linux-syscall, transform ret in global variable to avoid warning
+    (note ret variable was added to avoid warning with some over pedantic version of glibc
+     ans is otherwise useless).
+     Correct sched_getaffinity test in checkallnoprocps (it tested ret instead of errno).
+  unhide-tcp :
+  - Avoid to display the banner twice. 
+  unhide_rb :
+  - Suppress warning. 
+
+2012-12-07
+  unhide-linux :
+  - Remove sysinfo from quick and sys test as it may give false positive.
+
+  unhide-tcp :
+  - Nice ourself to -20 to limit race condition while probing ports. 
+
+2012-10-07
+  unhide-linux :
+  - Go back to multi-lines output in printbadpid in order to display more known
+    information about the process.
+
+2012-10-03
+  unhide-linux :
+  - Fix the name displayed for kernel thread (we used /proc/PID/wchan instead of
+    /proc/PID/comm).
+
+2012-09-05
+  unhide-linux, unhide-tcp :
+  - Add test to verify we're run by root.
+
+2012-09-02
+  unhide-linux :
+  - Remove useless calls to feof().
+  - Split unhide-linux.c in 5 files :
+    * unhide-linux-bruteforce.c
+    * unhide-linux.c
+    * unhide-linux-compound.c
+    * unhide-linux-procfs.c
+    * unhide-linux-syscall.c
+  - Add option '-o' as synonym for '-f'
+  - Add a parse_arg() function which use getopt_long().
+  - For found hidden processes, display the user and the working directory
+    as extracted from the process environment.
+
+2012-08-31
+  unhide-linux :
+  - Use unhide-output routines for display and log.
+  - Change logfile filename to 'unhide-linux_AAAA-MM-DD.log'
+  - Add header file for unhide-linux
+
+2012-08-22
+  unhide-tcp :
+  - Change the default tools to be ss instead of netstat.
+  - Replace option '-s' (use ss) by option '-n' (use netstat).
+  - Change option '-q' in '-s' with the same effect   
+  
+2012-06-03
+  unhide-tcp :
+  - Thanks to a patch of Leandro Lucarella and additional work from 
+    the unhide team, a major rewriting was done :
+    * Factorization & clean-up of the code
+    * Split the code in 4 files : unhide-tcp.c, unhide-fast.c, unhide-output.c
+      & unhide.h
+    * Add a new method for scanning ports via option '-q'
+  - Add a option '-s' to use ss command instead of nestat.
+  - Use getopt_long() to parse options and then add long option strings.
+  - Change logfile filename to 'unhide-tcp_AAAA-MM-DD.log'
+  - Many minor bug fixes (mainly display ones)
+  
+2012-03-18
+  unhide-linux26.c, unhide-posix.c, unhide-tcp.c :
+  - Change copyright attribution.
+
+  unhide_rb.c :
+  - Add banner display at start.
+
+  unhide-linux26.c :
+  - Change reserved process reserved for kernel from 299 to 300 for brute test.
+  - Add "-d" option for doing a double check in brute test, this reduce false positive number.
+    Thanks to François Boisson for the idea.
+  - Change log file name to unhide-linux.log
+
+  Documentation changes :
+  - Add example section in manpages.
+  - Indicate in bug section of manpages, the potential problem with sysinfo test.
+
+2012-03-17
+  Important changes :
+  - Rename unhide-linux26.c to unhide-linux.c and unhide.c to unhide-posix.c.
+  - Update readme files and manpages to reflect the renaming
+  - Add unhide_rb description to readme files.
+
+2012-03-11
+  unhide-linux26.c :
+  - Correct the number of processes displayed for /proc counting in sysinfo test.
+
+  unhide.c :
+  - Correct banner (POSIX -> UNIX).
+
+  Documentation changes :
+  - Update README.txt, LISEZ-MOI.txt and LEEME.txt to clarify difference between
+    unhide and unhide-linux26.
+
+2012-03-10
+  unhide-linux26.c :
+  - Fix pedantic compilation warnings reported when using recent version of glibc.
+  - Change report messages of checksysinfoX tests to make them clearer.
+  - Update banner to indicate this version is for system using Linux >= 2.6
+
+  unhide.c :
+  - Update banner to indicate this is legacy version of unhide for system using
+    Linux < 2.6 or other UNIX system.
+  - Fix compilation warnings
+
+2011-10-31
+  unhide-linux26.c :
+  - Add copyright and license output.
+
+  unhide-tcp.c :
+  - Add copyright and license output.
+  - Add -v, -V, -h, -l, -f, -o command line options.
+  - Add the capability to output fuser (-f) and/or lsof (-l) output for hidden port.
+  - Add the capability to create a log file (-o). File name is unhide-tcp.log
+
+  Documentation changes :
+  - Add a french manpage for unhide-tcp.
+  - Complete english manpage of unhide-tcp to reflect changes.
+  - Minor corrections in french manpage of unhide.
+  - Change compile command of unhide-tcp in README.txt, LISEZ-MOI.txt and LEEME.txt.
+  - Add info on unhide_rb in README.txt, LISEZ-MOI.txt and LEEME.txt.
+  - Update NEWS file.
+
+2011-02-08
+  Documentation changes :
+  - Add a NEWS file
+
+2011-01-13
+  All files :
+  - Replace reference to SourceForge with reference to new unhide web site in version string
+
+  man pages :
+  - Add spanish man pages
+
+2010-11-21
+  unhide-linux26.c :
+  Development changes :
+  - Minor readability when generating program info for display
+
+2010-11-21
+  unhide-linux26.c :
+  User visible changes :
+  - Add additional check to checkopendir when -m is specified.
+  - Correct warning message in additional check of checkchdir.
+  - Add sourceForge project URL in header
+
+  unhide.c :
+  - Add GPL disclaimer.
+
+  unhide-tcp.c :
+  - Add GPL disclaimer.
+
+  Documentation changes :
+  changelog :
+  - Fix an omission in 2010-11-14 Internal changes
+
+  man pages :  Development changes :
+
+  - update french and english man pages wrt '-m' option and checkopendir
+
+  Development changes :
+  - Correct message of test#1 of sanity.sh
+  - Use procall in test#2 of sanity.sh instead of proc
+
+2010-11-14
+  unhide-linux26.c :
+  User visible changes :
+  - Add ending time to log file.
+  - Add execution header to log file.
+  - Change date format to ISO 8601 one's in log file.
+  - Add warning, when selected, to log file.
+  - Update english and french man page to reflect the add of '-f' option.
+
+  Internal changes
+  - Close log file only if it is open.
+  - Factorize (f)printf to stdout & log.
+
+  Documentation changes :
+  README.txt & LISEZ-MOI.TXT
+  - Minor clarifications.
+  - Add description of all the files included in unhide
+
+  Development changes :
+  - Add a preliminary testsuite for unhide (sanity.sh)
+
+2010-11-09
+  unhide-linux26.c :
+  User visible changes :
+  - Add a option (-f) to create a log file.
+
+2010-10-16
+  Documentation changes :
+  LEEME.txt :
+  Correct compilation instruction.
+  Add reference to sourceforge site.
+
+  README.txt
+  Add reference to sourceforge site.
+  Correct typo.
+
+  LISEZ-MOI.TXT
+  Ajout du fichier
+
+2010-09-23
+  unhide-linux26.c :
+  User visible changes :
+  - Add reference to sourceforge path to version string
+
+  Documentation changes :
+  - Update man page to reflect all the change made so far.
+
+2010-09-23
+  unhide-linux26.c :
+  User visible changes :
+  - Add checkopendir test (also called by procfs and procall compound test)
+  - Also do opendir() test in reverse and quick tests.
+  - Add alternate sysinfo test (via -r option or checksysinfo2 test name)
+    It's a reorganised checksysinfo() to put uncritical instructions out of the critical part
+    It might (or not) work better on kernel patched for RT, preemption or latency.
+  - Make the output of hidden process on one line to facilitate parsing
+  - Display wchan if there is no cmdline and no exe link (sleeping kernel threads)
+  - Add -V version to show version and exit.
+  - The -v option can now be given more than once on command line.
+  - Correct the value returned by unhide
+  - Add the misssing new lines in most of the warnings (thanks to gordy for the report).
+  - Completely redo args parsing : now several tests can be simultaneously
+    entered on the command line.
+  - Add all elementary tests to the command line test list
+  - Add procall compound test command line args.
+
+  Internal changes
+  - Use printbadpid() in checkallnoprocps() as in other tests.
+  - Check the return of fgets in checkallreverse(), check of feof seems not to be
+     very reliable for a pipe, we sometime got the last line 2 times (thanks to gordy for the report).
+  - Also check it in checksysinfo & checksysinfo2
+  - Simplify and clarify test checksysinfo()
+  - Check for our own spawn ps process in reverse test to avoid false positive.
+  - Enhanced fake process detection in reverse test.
+  - Add a tests table to allow new command line parsing.
+  - Add management of several verbosity level.
+  - Correct a copy/past "typo", in checkps
+  - Correct an initialized fd use, that gcc don't report when -O2 isn't given on command line
+  - Minor optimizations of printf & sprintf calls.
+
+  Documentation changes :
+  - Add a warning about the generic version of unhide in README.txt (thanks to gordy for the report)
+  - Modify man page to add the -V option, correct typos and clarify quick test.
+  - Add -O2 option to compiling command line in README.txt
+  - Add a TODO file
+
+2010-08-19
+  unhide-linux26.c :
+  - Add GPL v3 Disclaimer
+  - Add new test 'procfs' (via readdir & chdir)
+  - Add new test 'reverse'
+  - Add new test 'quick'
+  - Add option verbose (-v) to allow warning display
+  - Add option morecheck (-m), only affect procfs test for now
+  - Add option help (-h)
+  - Displace usage in usage() function
+  - Add Changelog file (this file)
+  - Rewamp command line parsing in main()
+  - Change checkps() parameter to allow more scalability
+  - Minor optimization in brute(), we tried to create 300 more processes than available.
+  - Minor optimization : avoid to test our own PID
+  - Update the man page and README.txt to reflect changes.
+
+2010-02-01
+  unhide-linux26.c :
+  - Threads Brute Force added
+  - Add needed stuff (includes, defines, ...) to eliminate compilation warning.  (Thanks to J. Walles)
+  - Correct a typo in checkps() where fich_tmp is used in place of fich_pgid (Thanks to  P. Gouin)
+  - Corrected several FD leaks where files or pipes are read and closed even if they have failed to open. (Thanks to W. Doekes  & P. Gouin)
+  - Add warning messages if file or pipe fails to open (compatible with rkhunter use of unhide) (Thanks to W. Doekes & P. Gouin)
+  - Add warning messages if a test is skipped (compatible with rkhunter use of unhide). (Thanks to P. Gouin)
+  - Correct removing of leading spaces which tests one char too far for end of string in checkps(). (Thanks to P. Gouin)
+  - Close fd in get_max_pid().   (Thanks to P. Gouin)
+  - Close cmd_file in printbadpid().  (Thanks to P. Gouin)
+  - Add display of test name in checkallnoprocps().  (Thanks to P. Gouin)
+  - Close fich_processo in checksysinfo() (Thanks to W. Doekes)
+  - Avoid potential buffer overflow in checksysinfo()  (Thanks to W. Doekes)
+  - Correct allpids[] initialization in brute()  (Thanks to W. Doekes)
+  - Modify brute as modifying allpid from within the forked process may have undefined results (Linux vfork() man page) (Thanks to P. Gouin)
+  - Add return to main()  (Thanks to W. Doekes)
+  - Optimizations (Thanks to P. Gouin)
+
+2009-08-10 (BETA)
+-Improved maxpid routine (Thanks to Jan Iven)
+-Improved false positives detection (Thanks to Jan Iven)
+-Kill() syscall added (Thanks to Jan Iven)
+-Fixed sched_getaffinity() bug (Thanks to Jan Iven)
+-Some minor bug fixes
+
+2008-05-19
+-Fixed a race condition bug that showed false positives (Thanks to Johan Walles)
+-Added manpages (Thanks to Francois Marier)
+
+02-11-2007
+-Minor bugfixes
+-License added
+-sysinfo() syscall added
+
+28-12-2005
+-Initial Release
+

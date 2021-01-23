@@ -1,0 +1,80 @@
+.TH "UNHIDE-TCP" "8" "August 2012" "Administration commands"
+.SH "NAME"
+unhide-tcp \(em forensic tool to find hidden TCP/UDP ports
+.SH "SYNOPSIS"
+.PP
+\fBunhide-tcp [options]\fR
+.SH "DESCRIPTION"
+.PP
+\fBunhide-tcp\fR is a forensic tool that identifies TCP/UDP
+ports that are listening but are not listed by /sbin/ss (or
+alternatively by /bin/netstat) through brute forcing of all 
+TCP/UDP ports available.
+.br
+Note1 : On FreeBSD ans OpenBSD, netstat is allways used as iproute2 doesn't exist
+on these OS. In addition, on FreeBSD, sockstat is used instead of fuser.
+Note2 : If iproute2 is not available on the system, option -n or -s SHOULD be
+given on the command line.
+.PP
+.SH "OPTIONS"
+.TP
+\fB\-h --help\fR
+Display help
+.TP
+\fB\--brief\fR
+Don't display warning messages, that's the default behavior.
+.TP
+\fB\-f --fuser\fR
+Display fuser output (if available) for the hidden port
+On FreeBSD, instead of fuser command, displays the output of the sockstat command for the hidden port.
+.TP
+\fB\-l --lsof\fR
+Display lsof output (if available) for the hidden port
+.TP
+\fB\-n --netstat\fR
+Use /bin/netstat instead of /sbin/ss. On system with many opened ports, this can
+slow down the test dramatically.
+.TP
+\fB\-s --server\fR
+Use a very quick strategy of scanning. On system with a lot of opened ports,
+it is hundreds times faster than ss method and ten thousands times faster than
+netstat method.
+.TP
+\fB\-o --log\fR
+Write a log file (unhide-tcp-AAAA-MM-DD.log) in the current directory.
+.TP
+\fB\-V --version\fR
+Show version and exit
+.TP
+\fB\-v --verbose\fR
+Be verbose, display warning message (default : don't display).
+This option may be repeated more than once.
+.PP
+.SS "Exit status:"
+.TP
+0
+if no hidden port is found,
+.TP
+4
+if one or more hidden TCP port(s) is(are) found,
+.TP
+8
+if one or more hidden UDP port(s) is(are) found,
+.TP
+12
+if one or more hidden TCP and UDP ports are found.
+.PP
+.SH "SEE ALSO"
+.PP
+unhide (8).
+.SH "AUTHOR"
+.PP
+This manual page was written by Francois Marier francois@debian.org and Patrick Gouin.
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU General Public License, Version 3 or any
+later version published by the Free Software Foundation.
+.SH LICENSE
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.

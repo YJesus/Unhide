@@ -1,0 +1,130 @@
+Changes since 20121229 :
+**********************
+
+BUG FIXES
+  - include <stdarg.h> in unhide-output.h, some old gcc/glibc need it.
+
+SUPPORT FOR PORTING
+  - On non Linux OS, ss is not used by default by unhide-tcp.
+    This way, FreeBSD guys should be able to package without patching unhide source :)
+  - On FreeBSD, use sockstat instead of fuser.
+
+MISCELLANOUS
+
+  - The unhide files in the tarball are again contained in a directory (unhide-YYYYMMDD)
+  - The name of the tarball uses again a '-' not a '_'.
+  - Help packagers: in unhide-posix.c, unhide-output.c, unhide-tcp.c, OS specific
+    command are put between #ifdef instead of beeing commented.
+  - Correct banner of unhide-posix.
+  - Update manpages.
+  - Add build/use require list in readme files
+    
+
+
+Changes since 20110113 :
+**********************
+
+IMPORTANT
+
+  - unhide-linux26.c was renamed to unhide-linux.c
+  - unhide.c was renamed to unhide-posix.c
+  - The log file of unhide-linux is renamed 'unhide-linux_AAAA-MM-DD.log'
+  - The log file of unhide-tcp is named 'unhide-tcp_AAAA-MM-DD.log'
+  - By default, unhide-tcp now use /sbin/ss from iproute2 package, to use
+    netstat as before '-n' option must be given on command line.
+  - Display is more verbose and multi-lines for hidden processes (unhide-linux).
+  - If asked to (-l and/or -f), display is more verbose and multi-lines for hidden ports (unhide-tcp).
+  - sysinfo test is no more called as part of compound quick and sys tests as it may give false positives.
+    It could still be run using the checksysinfo, checksysinfo2 or checksysinfo3 command line parameter.
+
+NEW FEATURES
+
+  - Major enhancement of unhide-tcp :
+     * Add capability to output a log file (unhide-tcp_AAA-MM-DD.log)
+     * Add capability to output more information (via lsof and/or fuser) on hidden port if available
+     * Add verbose mode (disabled by default) to display warning
+     * Add a new method (via option '-s') very fast on system with huge number of opened ports
+     * Make a double check of port access to avoid false positive (previous single check
+       version is available as unhide-tcp-simple-check.c if needed).
+  - Add a quick port in C language of unhide.rb (unhide_rb.c) and guess what ...
+    it's 40 times faster than original ruby unhide.rb
+    unhide_rb doesn't take any option.
+  - Add "-d" option for doing a double check in brute test, this reduce false positives.
+  - Add "-o" option as synonym of "-f".
+  - For found hidden processes, display the user and the working directory
+    as extracted from the process environment. Note that it doesn't work well 
+    for kernel processes/threads nor for deamons.
+  - For found hidden processes, display cmdline, exe link and internal command name.
+
+MISCELLANOUS
+
+  - Add french and spanish man page for unhide-tcp
+  - Update english manpage of unhide-tcp to reflect changes
+  - Minor corrections in french manpage of unhide
+  - Display copyright and license information in start banners.
+  - Make message from sysinfo tests more clear.
+  - Add a NEWS file :)
+  - Update README.txt, LISEZ-MOI.txt and LEEME.txt to clarify difference between
+    unhide-posix and unhide-linux.
+  - Remove sysinfo test from quick and sys compound tests as it may give false positive.
+    sysinfo test still can be used via the checksysinfo[2|3] command line parameters.
+
+BUG FIXES
+
+  - Suppress pedantic compilation warnings (glibc >=2.3, gcc >=4.6).
+  - Correct the number of processes displayed for /proc counting in sysinfo test.
+
+Changes since 20100819 :
+**********************
+
+NEW FEATURES
+
+  - Add spanish man page
+  - Add additional check to checkopendir when -m is specified.
+  - Add a option (-f) to create a log file.
+  - Add checkopendir test (also called by procfs and procall compound test)
+  - Also do opendir() test in reverse and quick tests.
+  - Add alternate sysinfo test (via -r option or checksysinfo2 test name)
+  - Make the output of hidden process on one line to facilitate parsing
+  - Display wchan if there is no cmdline and no exe link (sleeping kernel threads)
+  - Add -V version to show version and exit.
+  - The -v option can now be given more than once on command line : management of several verbosity level.
+  - Now several tests can be simultaneously entered on the command line.
+  - Add all elementary tests to the command line test list
+  - Add procall compound test command line args.
+  - Check for our own spawn ps process in reverse test to avoid false positive.
+  - Enhanced fake process detection in reverse test.
+
+BUG FIXES
+
+  - Correct warning message in additional check of checkchdir.
+  - Close log file only if it is open.
+  - Correct the value returned by unhide
+  - Add the misssing new lines in most of the warnings (thanks to gordy for the report).
+  - Check the return of fgets in checkallreverse(), check of feof seems not to be
+     very reliable for a pipe, we sometime got the last line 2 times (thanks to gordy for the report).
+  - Correct an initialized fd use, that gcc don't report when -O2 isn't given on command line
+
+DEVELOPER ISSUES
+
+  - Minor readability when generating program info for display
+  - Factorize (f)printf to stdout & log.
+  - Add a preliminary testsuite for unhide (sanity.sh)
+  - Use printbadpid() in checkallnoprocps() as in other tests.
+  - Also check it in checksysinfo & checksysinfo2
+  - Simplify and clarify test checksysinfo()
+  - Redo args parsing : Manage multiple args on command line and several verbosity levels.
+  - Add a tests table to allow new command line parsing.
+  - Correct a copy/past "typo", in checkps
+  - Minor optimizations of printf & sprintf calls.
+
+MISCELLANOUS
+
+  - Add a NEWS file
+  - Add GPL disclaimer to source files
+  - Add french LISEZ-MOI.txt file
+  - Add reference to new unhide site in version string
+  - Add a warning about the generic version of unhide in README.txt (thanks to gordy for the report)
+  - Modify man page to add the -V option, correct typos and clarify quick test.
+  - Add -O2 option to compiling command line in README.txt
+  - Add a TODO file

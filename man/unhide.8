@@ -1,0 +1,241 @@
+.TH "UNHIDE" "8" "March 2012" "Administration commands"
+.SH "NAME"
+unhide \(em forensic tool to find hidden processes
+.SH "SYNOPSIS"
+.PP
+\fBunhide\fR [\fIOPTIONS\fR] \fITEST_LIST\fR
+.br
+\fBunhide\-posix\fR \fIproc | sys\fR
+.SH "DESCRIPTION"
+.PP
+\fBunhide\fR is a forensic tool to find processes hidden by
+rootkits, Linux kernel modules or by other techniques.  It
+detects hidden processes using six techniques.
+.PP
+.SH "OPTIONS"
+.PP
+Options are only available for \fBunhide-linux\fR not for \fBunhide-posix\fR.
+.TP
+\fB\-d\fR
+Do a double check in brute test to avoid false positive.
+.TP
+\fB\-f\fR
+Write a log file (unhide-linux.log) in the current directory.
+.TP
+\fB\-h\fR
+Display help
+.TP
+\fB\-m\fR
+Do more checks. As of 2012\-03\-17 version, this option has only
+effect for the procfs, procall, checkopendir and checkchdir tests.
+.br
+Implies -v
+.TP
+\fB\-r\fR
+Use alternate version of sysinfo check in standard tests
+.TP
+\fB\-V\fR
+Show version and exit
+.TP
+\fB\-v\fR
+Be verbose, display warning message (default : don't display).
+This option may be repeated more than once.
+.PP
+.PP
+.SH "TEST_LIST"
+.PP
+The checks to do consist of one or more of the following tests.
+.br
+The standard tests are the aggregation of one or more elementary test(s).
+.PP
+\fBStandard tests :\fR
+.PP
+The \fIbrute\fR technique consists of bruteforcing the all
+process IDs.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIproc\fR technique consists of comparing /proc with the
+output of /bin/ps.
+.PP
+The \fIprocall\fR technique combinates proc and procfs tests.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIprocfs\fR technique consists of comparing information
+gathered from /bin/ps with information gathered by walking in the procfs.
+.br
+With \fB-m\fR option, this test makes more checks, see \fIcheckchdir\fR test.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIquick\fR technique combines the proc, procfs and sys techniques in a
+quick way. It's about 20 times faster but may give more false positives.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIreverse\fR technique consists of verifying that all threads
+seen by ps are also seen in procfs and by system calls. It is intended to
+verify that a rootkit has not killed a security tool (IDS or other) and
+make ps showing a fake process instead.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIsys\fR technique consists of comparing information
+gathered from /bin/ps with information gathered from system
+calls.
+.PP
+\fBElementary tests :\fR
+.PP
+The \fIcheckbrute\fR technique consists of bruteforcing the all
+process IDs.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckchdir\fR technique consists of comparing information
+gathered from /bin/ps with information gathered by making chdir() in the procfs.
+.br
+With the \fB-m\fR option, it also verify that the thread appears in its
+"leader process" threads list.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetaffinity\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the sched_getaffinity()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetparam\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the sched_getparam()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetpgid\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the getpgid()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetprio\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the getpriority()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckRRgetinterval\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the sched_rr_get_interval()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetsched\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the sched_getscheduler()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckgetsid\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the getsid()
+system function.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckkill\fR technique consists of comparing information
+gathered from /bin/ps with the result of call to the kill()
+system function.
+.br
+Note : no process is really killed by this test.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIchecknoprocps\fR technique consists of comparing the result of the call
+to each of the system functions. No comparison is done against /proc or the
+output of ps.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckopendir\fR technique consists of comparing information
+gathered from /bin/ps with information gathered by making opendir() in the procfs.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckproc\fR technique consists of comparing /proc with the
+output of /bin/ps.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckquick\fR technique combines the proc, procfs and sys techniques in a
+quick way. It's about 20 times faster but may give more false positives.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckreaddir\fR technique consists of comparing information
+gathered from /bin/ps with information gathered by making readdir() in /proc and
+/proc/pid/task.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIcheckreverse\fR technique consists of verifying that all threads
+seen by ps are also seen in procfs and by system calls. It is intended to
+verify that a rootkit has not killed a security tool (IDS or other) and
+make ps showing a fake process instead.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIchecksysinfo\fR technique consists of comparing the number of process
+seen by /bin/ps with information obtained from sysinfo() system call.
+.br
+This technique is only available with version unhide\-linux.
+.PP
+The \fIchecksysinfo2\fR technique is an alternate version of checksysinfo test.
+It might (or not) work better on kernel patched for RT, preempt or latency and
+with kernel that don't use the standard scheduler.
+.br
+It's also invoked by standard tests when using the \fB-r\fR option
+.br
+This technique is only available with version unhide\-linux.
+.SS "Exit status:"
+.TP
+0
+if OK,
+.TP
+1
+if a hidden or fake thread is found.
+.PP
+.SH "EXAMPLES"
+.TP
+Quicker test:
+unhide quick
+.TP
+Quick test:
+unhide quick reverse
+.TP
+Standard test:
+unhide sys proc
+.TP
+Deeper test:
+unhide -m -d sys procall brute reverse
+.SH "BUGS"
+.PP
+Report \fBunhide\fR bugs on the bug tracker on sourceforge (http://sourceforge.net/projects/unhide/)
+.br
+With recent versions of Linux kernel (> 2.6.33), the sysinfo test may report false positives.
+It may be due to optimization in the scheduler, the use of cgroup or even the use of systemd.
+The use of the PREEMPT-RT patch amplifies the occurence of the problem.
+This is currently under investigation.
+.SH "SEE ALSO"
+.PP
+unhide-tcp (8).
+.SH "AUTHOR"
+.PP
+This manual page was written by Francois Marier francois@debian.org and Patrick Gouin.
+Permission is granted to copy, distribute and/or modify this document under
+the terms of the GNU General Public License, Version 3 or any
+later version published by the Free Software Foundation.
+.SH LICENSE
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.

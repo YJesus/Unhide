@@ -1,0 +1,196 @@
+.TH "UNHIDE" "8" "Marzo 2012" "Comandos de administración" ""
+.SH "NOMBRE"
+unhide \(em Herramienta forense para descubrir procesos ocultos
+.SH "SINOPSIS"
+.PP 
+\fBunhide\-linux\fR [\fIOPTIONS\fR] \fITEST_LIST\fR
+.br 
+\fBunhide\-posix\fR \fIproc | sys\fR
+.SH "DESCRIPCIÓN"
+.PP 
+\fBunhide\fR es una herramienta forense para detectar procesos ocultos en sistemas Unix que hayan sido ocultados mediante rookits / módulos en el Kernel o cualquier otra técnica de ocultación. Implementa seis técnicas de detección
+.PP 
+.SH "OPCIONES"
+.PP 
+Opciones sólo están disponibles para \fBunhide\-linux\fR no para \fBunhide\-posix\fR.
+.TP 
+\fB\-d\fR
+Realiza una prueba doble control en test 'brute' para reducir la aparición de falsos positivos.
+.TP 
+\fB\-f\fR
+Crea un fichero de log (unhide\-linux.log) en el directorio de ejecución.
+.TP 
+\fB\-h\fR
+Muestra la ayuda
+.TP 
+\fB\-m\fR
+Realiza múltiples tests añadidos, desde la versión 2012\-03\-17, esta opción solo es válida en los tests 'procfs', 'procall', 'checkopendir' y 'checkchdir'
+.br 
+Implica \-v
+.TP 
+\fB\-r\fR
+Emplea una versión alternativa del test sysinfo
+.TP 
+\fB\-V\fR
+Muestra la versión y sale
+.TP 
+\fB\-v\fR
+Fuerza la salida debug con los mensajes de error (se puede repetir varias veces \-vv)
+.PP 
+.PP 
+.SH "TEST_LIST"
+.PP 
+Los checks consisten en uno o mas de los siguientes tests
+.br 
+Los tests estandar son en realidad agrupaciones de varios tests elementales
+.PP 
+\fBTests estandar :\fR
+.PP 
+El test \fIbrute\fR consiste en hacer fuerza bruta sobre todo el espacio de identificadores de procesos (PIDS)
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIproc\fR consiste en comparar el directorio /proc con la salida del comando /bin/ps
+.PP 
+El test \fIprocall\fR combina los tests proc y procfs
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIprocfs\fR consiste en comparar la información obtenida por /bin/ps con los datos obtenidos al recorrer procfs
+.br 
+Con la opción \fB\-m\fR este test realiza tests adicionales, para mas información consultar \fIcheckchdir\fR
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIquick\fR combina los tests proc, procfs y sys en una forma 'rápida' de ejecución, es hasta 20 veces mas rápido que otros test pero también puede ofrecer mas falsos positivos
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIreverse\fR consiste en verificar que todos los procesos e hilos que son vistos por /bin/ps existen realmente buscandolos en procfs y por system calls. El objetivo es averiguar si se ha modificado /bin/ps para hacer creer que existen en ejecución algunos programas que realmente no lo están
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIsys\fR consiste en comparar la información obtenida de /bin/ps contra algunas system calls
+.PP 
+\fBTests elementales :\fR
+.PP 
+El test \fIcheckbrute\fR consiste en hacer fuerza bruta contra todo el espacio de procesos (PIDS) del sistema
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckchdir\fR consiste en comparar la información obtenida por /bin/ps y compararla haciendo chdir() en procfs
+.br 
+Con la opción \fB\-m\fR también se comprueba que el hilo aparece en la lista "leader process"
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetaffinity\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call sched_getaffinity()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetparam\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call sched_getparam()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetpgid\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call getpgid()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetprio\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call getpriority()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckRRgetinterval\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call sched_rr_get_interval()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetsched\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call sched_getscheduler()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckgetsid\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call getsid()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckkill\fR consiste en comparar la información obtenida por /bin/ps con el resultado de la system call kill()
+.br 
+Nota: ningún proceso es 'matado' con este test
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIchecknoprocps\fR consiste en comparar el resultado de la información obtenida usando cada una de las system calls buscando diferencias entre si. No se emplea /bin/ps o /proc
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckopendir\fR consiste en comparar la información obtenida por /bin/ps con el resultado de hacer opendir() sobre procfs
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckproc\fR consiste en comparar la información obtenida por /bin/ps con los datos de /proc
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckquick\fR combina los tests proc, procfs y sys en una forma 'rápida' de ejecución, es hasta 20 veces mas rápido que otros test pero también puede ofrecer mas falsos positivos
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckreaddir\fR consiste en comparar la información obtenida por /bin/ps con el resultado de hacer readdir() en /proc y /proc/pid/task
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIcheckreverse\fR consiste en verificar que todos los procesos e hilos que son vistos por /bin/ps existen realmente buscandolos en procfs y por system calls. El objetivo es averiguar si se ha modificado /bin/ps para hacer creer que existen en ejecución algunos programas que realmente no lo están
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIchecksysinfo\fR consiste en comparar el número de procesos contabilizados por /bin/ps contra el número de procesos que indica la syscall sysinfo()
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.PP 
+El test \fIchecksysinfo2\fR es una versión alternativa de checksysinfo, se presupone que funciona mejor en kernels parcheados para RT, preempt o latency y también con kernels que no usen el planificador estandar
+.br 
+Este test está implicito cuando se ejecuta con la opción \fB\-r\fR
+.br 
+Esta técnica solo está disponible con la versión unhide\-linux.
+.SS "Valor regresado:"
+.TP 
+0
+si todo OK,
+.TP 
+1
+si se ha localizado un proceso/hilo oculto o falso
+.PP 
+.SH "EJEMPLOS"
+.TP 
+Un test excepcionalmente rápido :
+unhide quick
+.TP 
+Test rápido :
+unhide quick reverse
+.TP 
+Estándar test :
+unhide sys proc
+.TP 
+Un test completo :
+unhide \-m \-d sys procall brute reverse
+.SH "FALLOS"
+.PP 
+Puedes reportar fallos de \fBunhide\fR en el 'bug tracker' de Sourceforge (http://sourceforge.net/projects/unhide/)
+.br 
+Con las últimas versiones de kernel de Linux (> 2.6.33), el test sysinfo puede reportar falsos positivos.
+Puede ser debido a la optimización en el scheduler, el uso de cgroup o incluso el uso de systemd.
+El uso del patch PREEMPT\-RT amplifica la probabilidad de que se de ese problema.
+Esto es actualmente objeto de investigación.
+.SH "VÉASE TAMBIÉN"
+.PP 
+unhide\-tcp (8).
+.SH "AUTOR"
+.PP 
+Este manual ha sido creado por Francois Marier francois@debian.org y Patrick Gouin.
+Se concede permiso para ser copiado, distribuido y modificado bajo los términos de la licencia 
+GNU, versión 3 o versiones posteriores publicadas por la Free Software Foundation
+
+.SH "LICENSE"
+License GPLv3+: GNU GPL version 3 o posterior <http://gnu.org/licenses/gpl.html>.
+.br 
+Este es software libre, vd es libre de modificar y redistribuir las modificaciones.
+Este software no provee ninguna garantía .

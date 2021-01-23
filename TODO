@@ -1,0 +1,25 @@
+[TODO]
+- Integrate -m in other test,
+- Try to factorize the code,
+- More optimizations,
+- Add a mail sending option,
+- Beautify the source (add comments, function headers, etc.),
+- Add a version number beside date of release,
+- Localize (have you already used gettext ?), create man pages in other language
+- Add an install script or use autotools/cmake/something else.
+- Upgrade the generic version of unhide with some of the enhancements of the
+  linux26 version.
+- Others ...
+
+
+[DONE]
+- Make a meta proc test that involves all /proc test (proc and procfs)
+- Add more verbosity level,
+- Sanitize the exit code,
+- Make a better command line parsing (without getopt:),
+- Put it in a CVS/SVN/Git repo, unhide is on sourceforge.
+- Create a TODO file :), you're reading it
+- Add an option (-x for expert ?) which allows to run subtest individually.
+   Done without the use of a special option
+- Add a option (-f ) to create a log file, (not everybody use unhide via RKH)
+- Add a test script to reliably test new version (preliminary version).

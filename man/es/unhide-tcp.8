@@ -1,0 +1,79 @@
+.TH "UNHIDE-TCP" "8" "August 2012" "Administration commands" ""
+.SH "NOMBRE"
+unhide\-tcp \(em Herramienta forense para localizar puertos TCP/UDP ocultos
+.SH "SYNOPSIS"
+.PP 
+\fBunhide\-tcp [opciones]\fR
+.SH "DESCRIPCIÓN"
+.PP 
+\fBunhide\-tcp\fR es una herramienta forense capaz de identificar puertos
+TCP/UDP que están a la escucha pero no aparecen listados en /sbin/ss (o alternativamente
+/bin/netstat) haciendo fuerza bruta en todo el espacio de puertos TCP/UDP disponibles
+.br 
+Nota1 : Tanto en FreeBSD como en OpenBSD el comando netstat será siempre la opción elegida
+puesto que iproute2 no está disponible. Además en FreeBSD se usará sockstat en lugar de fuser
+
+Nota2: Si el comando iproute2 no se encuentra disponible en el sistema la opción \-n o \-s DEBE estar
+entre los flags con los que es llamado unhide\-tcp
+.PP 
+.SH "OPCIONES"
+.TP 
+\fB\-h \-\-help\fR
+Muestra la ayuda
+.TP 
+\fB\-\-brief\fR
+No muestra mensajes de error. Este es el comportamiento por defecto
+.TP 
+\fB\-f \-\-fuser\fR
+Muestra la salida del comando fuser (si se encuentra en el sistema) del puerto oculto
+Para FreeBSD, en lugar de comando fuser, muestra la salida del comando sockstat del puerto oculto
+.TP 
+\fB\-l \-\-lsof\fR
+Muestra la salida del comando lsof (si se encuentra en el sistema) del puerto oculto
+.TP 
+\fB\-n \-\-netstat\fR
+Emplea /bin/netstat en vez de /sbin/ss. En sistemas con muchos puertos abiertos usar esta opción
+puede provocar que el test resulte excesivamente lento
+.TP 
+\fB\-s \-\-server\fR
+Usa un método de escaneo muy rápido. En sistemas con muchos puertos abiertos este test es
+cientos de veces más rápido que si se usa el comando ss y miles de veces más rápido que si se usa
+el comando netstat
+.TP 
+\fB\-o \-\-log\fR
+Genera un fichero de log (unhide\-tcp\-AAAA\-MM\-DD.log) en el directorio donde se ejecuta el comando
+.TP 
+\fB\-V \-\-version\fR
+Muestra la versión y sale
+.TP 
+\fB\-v \-\-verbose\fR
+Muestra mucha información así como los mensajes de advertencia. Esta opción puede usarse varias veces
+.PP 
+.SS "Exit status:"
+.TP 
+0
+Si no se ha encontrado ningún puerto oculto,
+.TP 
+4
+Si uno o varios puertos TCP ocultos son localizados,
+.TP 
+8
+Si uno o varios puertos UDP ocultos son encontrados
+.TP 
+12
+Si uno o varios puertos TCP y UDP ocultos son encontrados
+.PP 
+.SH "VÉASE TAMBIÉN"
+.PP 
+unhide (8).
+.SH "AUTOR"
+.PP 
+Este manual ha sido creado por Francois Marier francois@debian.org y Patrick Gouin.
+Se concede permiso para ser copiado, distribuido y modificado bajo los términos de la licencia 
+GNU, versión 3 o versiones posteriores publicadas por la Free Software Foundation
+.SH "LICENCIA"
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+.br 
+License GPLv3+: GNU GPL version 3 o posterior <http://gnu.org/licenses/gpl.html>.
+Este es software libre, vd es libre de modificar y  redistribuir  las  modificaciones.   
+Este  software  no  provee ninguna garantía .
