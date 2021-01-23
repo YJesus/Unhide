@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // header
 const char header[] =
-       "Unhide-tcp 20130526\n"
+       "Unhide-tcp 20210123\n"
        "Copyright © 2013 Yago Jesus & Patrick Gouin\n"
        "License GPLv3+ : GNU GPL version 3 or later\n"
        "http://www.unhide-forensics.info\n";

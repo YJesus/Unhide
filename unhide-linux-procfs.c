@@ -389,6 +389,7 @@ void checkreaddir(void)
       char *directory ;
 
       directory = dirproc->d_name;
+
       if(!isdigit(*directory)) 
       {
          // not a process directory of /proc
@@ -397,6 +398,7 @@ void checkreaddir(void)
 //    sprintf(currentproc, "%d", directory);
 
       // Warning here as gcc can't know that directory (task number) contains far less than 94 char.
+      // max PID = 2³32 - 1 has  11 digits max
 #ifdef __GNUC__
    #pragma GCC diagnostic push
    #pragma GCC diagnostic ignored "-Wformat-overflow="
