@@ -98,8 +98,8 @@ void checkchdir(void)
 {
 
    int procpids ;
-   int statusdir, backtodir;
-   char curdir[PATH_MAX], *pathpt ;
+   int statusdir;
+   char curdir[PATH_MAX] ;
    char directory[100] ;
 // char scratch[PATH_MAX] ;   // DEBUG
 // int count = 0;    //DEBUG
@@ -107,7 +107,7 @@ void checkchdir(void)
    msgln(unlog, 0, "[*]Searching for Hidden processes through /proc chdir scanning\n") ;
 
    // get the path where Unhide is ran from.
-   if (NULL == (pathpt = getcwd(curdir, PATH_MAX))) 
+   if (NULL == getcwd(curdir, PATH_MAX))
    {
       warnln(verbose, unlog, "Can't get current directory, test aborted") ;
       return;
@@ -137,8 +137,6 @@ void checkchdir(void)
          int   found_tgid = FALSE;
          char  line[128] ;
          char* tmp_pids = line;
-         char* end_pid;
-         char  new_directory[100];
 
 //       printf("directory = '%s'\n", directory);  // DEBUG
 //       getcwd(scratch, PATH_MAX);                // DEBUG
@@ -163,6 +161,8 @@ void checkchdir(void)
 
          if (TRUE == found_tgid) 
          {
+            char* end_pid;
+            
             tmp_pids = line + 5;
             while( ((*tmp_pids == ' ') || (*tmp_pids == '\t'))  && (tmp_pids <= line+127)) 
             {
@@ -175,13 +175,15 @@ void checkchdir(void)
                end_pid++;
             }
             *end_pid = 0;  // remove \n
-//          if the number of threads is < to about 40 % of the number of processes,
-//          the next "optimising" test actually produce a slower executable.
-//          if(procpids != atoi(tmp_pids))
+            //  if the number of threads is < to about 40 % of the number of processes,
+            //  the next "optimising" test actually produce a slower executable.
+            //  if(procpids != atoi(tmp_pids))
             {   // if the thread isn't the master thread (process)
-//             count++;    // DEBUG
+               char  new_directory[100];
+
                sprintf(new_directory,"/proc/%s/task/%d", tmp_pids, procpids) ;
-//             printf("new_dir = %s\n", new_directory);   // DEBUG
+               // count++;    // DEBUG
+               // printf("new_dir = %s\n", new_directory);   // DEBUG
                statusdir = chdir(new_directory) ;
                if (statusdir != 0) 
                {
@@ -199,7 +201,7 @@ void checkchdir(void)
       }
 
       // unlock the proc directory so it can disappear if it's a transitory process
-      if (-1 == (backtodir = chdir(curdir))) 
+      if (-1 == chdir(curdir))
       {
          warnln(verbose, unlog, "Can't go back to unhide directory, test aborted") ;
          return;
@@ -220,7 +222,7 @@ void checkchdir(void)
       printbadpid(procpids);
    }
    // go back to our path
-   if (-1 == (backtodir = chdir(curdir))) 
+   if (-1 == chdir(curdir))
    {
       warnln(verbose, unlog, "Can't go back to unhide directory, test aborted") ;
       return;
@@ -266,9 +268,6 @@ void checkopendir(void)
          int   found_tgid = FALSE;
          char  line[128] ;
          char* tmp_pids = line;
-         char* end_pid;
-         char  new_directory[100] ;
-         DIR*  statdir;
 
 //       printf("directory = '%s'\n", directory);  // DEBUG
 //       getcwd(scratch, PATH_MAX);                // DEBUG
@@ -294,6 +293,8 @@ void checkopendir(void)
 
          if (TRUE == found_tgid) 
          {
+            char* end_pid;
+            
             tmp_pids = line + 5;
             while( ((*tmp_pids == ' ') || (*tmp_pids == '\t'))  && (tmp_pids <= line+127)) 
             {
@@ -310,10 +311,13 @@ void checkopendir(void)
 //          the next "optimising" test actually produce a slower executable.
 //          if(procpids != atoi(tmp_pids))
             {   // if the thread isn't the master thread (process)
-//             count++;    // DEBUG
+               char  new_directory[100] ;
+               DIR*  statdir;
+               
                sprintf(new_directory,"/proc/%s/task/%d", tmp_pids, procpids) ;
-//             printf("new_dir = %s\n", new_directory);   // DEBUG
-//             errno = 0;
+               // count++;    // DEBUG
+               // printf("new_dir = %s\n", new_directory);   // DEBUG
+               // errno = 0;
                statdir = opendir(new_directory) ;
                if (NULL == statdir) 
                {
@@ -392,7 +396,15 @@ void checkreaddir(void)
       }
 //    sprintf(currentproc, "%d", directory);
 
+      // Warning here as gcc can't know that directory (task number) contains far less than 94 char.
+#ifdef __GNUC__
+   #pragma GCC diagnostic push
+   #pragma GCC diagnostic ignored "-Wformat-overflow="
+#endif
       sprintf(&task[6], "%s/task", directory) ;
+#ifdef __GNUC__
+   #pragma GCC diagnostic pop
+#endif
 //    printf("task : %s", task) ; // DEBUG
       taskdir = opendir(task);
       if (NULL == taskdir) 

@@ -1,3 +1,25 @@
+Changes since 20130526 :
+**********************
+
+BUG FIXES
+  - Correct all known bugs
+  - Fix all warnings reported by cppcheck
+  - Fix all warnings reported by gcc 8.4 -Wall
+
+ENHANCEMENTS
+  - Add option -u to do unbuffered output.
+  - Flush outputs in order to not block pipe if stdout is redirected.
+  - Add a slightly human friendlier output triggered by -H option
+  - Print start time and end time in log (and console if -H is given)
+  - Add time to log file name
+  
+GUI
+  - Add a simple, quick and dirty python/Tkinter tools to generate and/or run unhide-linux and unhide-tcp command. 
+
+MISCELLANOUS
+  - Adapt checkoneport() to bogus/broken text output of "recent" version of ss tool (modified end of line).
+
+  
 Changes since 20121229 :
 **********************
 

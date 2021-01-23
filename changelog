@@ -1,3 +1,82 @@
+2021-01
+  unhide-linux-procfs.c
+  - Suppress -Wformat-overflow warning by GCC >= 8.0 in function checkreaddir().
+  
+  unhide-posix.c
+  - Correct warning about strcpy and strcat in main().
+  
+  unhide_rb.c
+  - Add missing braces in get_suspicious_pids()
+  - Correct warning about strcpy and strcat in main().
+  - increase size of scratch string to avoid warning.
+
+  unhide-linux.c, unhide-linux.h
+  - Add option to get a slightly human friendlier output.
+  - Use it !
+  
+  unhide-linux-compound.c, unhide-linux-output.c, unhide-tcp.c
+  - Use option for human friendlier output.
+
+  unhide-tcp.h
+  - Add definition of boolean values.
+
+2020-01
+  unhide-output.c
+  - Protect msgln() from buffer overflow.
+
+  unhide-tcp.c
+  - adapt checkoneport() to broken text output of "recent" version of ss tool (modified end of line).
+
+
+2019-11
+  UnhideGui.py:
+  - Add a simple, quick and dirty python/Tkinter tools to generate and run unhide-linux and unhide-tcp command.
+
+  unhide-linux.c
+  - Correct a fd leak in get_max_pid() [SF ticket #7].
+  - flush stdout after usage message, in order to not block pipe if stdout is redirected.
+  - flush stdout after header display, for the same reason.
+  - add option to disable buffering of stdout for subprocesses pipe-opened by unhide.
+  
+  unhide-linux.h
+  - add option and macro to disable buffering of stdout for subprocesses pipe-opened by unhide.
+  - Translate (historical) spanish function names in english.
+
+  unhide-output.c
+  - Flush stdout after display of string, in order to not block pipe if stdout is redirected.
+  - Add time to log name (as RKHunter run each test separately and overwrite previous log file).
+  - Print start and end times to stdout if log is enabled
+
+  unhide-posix.c
+  - Test the return values of the two fopen() and correct a fd leak in checkps()
+  
+  unhide-linux-compound.c
+  - Add "Not found" message in case no hiden process is found in checkallquick() and checkallreverse().
+  - Add a missing line feed in the first message of checkallquick().
+  - Add a missing line feed in the first message of checkallreverse().
+
+  unhide-linux-syscall.c
+  - Manage unbuffering stdout option in checksysinfoX() routines.
+  - Translate (historical) spanish variable names in english.
+  
+  unhide-linux-bruteforce.c
+  - Translate (historical) spanish function names in english.
+  
+  unhide-tcp.c
+  - flush stdout after usage message, in order to not block pipe if stdout is redirected.
+  - flush stdout after header display, for the same reason.
+  - Correct message for used options for netstat option
+
+  unhide-rb.c
+  - flush stdout after fprintf() and fputs().
+  - don't call fclose() if fopen() failed in  get_suspicious_pids().
+  
+  tar_list.txt
+  - remove unhide-tcp-simple-check.c which was include by mistake.
+
+  unhide-linux-compound.c, unhide-linux-procfs.c, unhide-linux-syscall.c, unhide-linux.c
+  - Correct ccpcheck warning
+  
 2013-05-26
   unhide-posix.c
   - Transform 'ret' in global variable to avoid warnings

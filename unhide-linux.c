@@ -65,10 +65,12 @@ int tid ;
 pid_t mypid ;
 
 // options
-int verbose = 0;
-int morecheck = FALSE;
-int RTsys = FALSE;
-int brutesimplecheck = TRUE;
+int verbose = 0 ;
+int morecheck = FALSE ;
+int RTsys = FALSE ;
+int brutesimplecheck = TRUE ;
+int unbufferedstdout = FALSE ;
+int humanfriendly = FALSE ;
 
 // Found hidden proccess flag
 int found_HP = 0;
@@ -98,14 +100,10 @@ void get_max_pid(int* newmaxpid)
    if(!fd) 
    {
       warnln(1, unlog, "Cannot read current maximum PID. Using default value %d", * newmaxpid) ;
-      return;
    }
-
-
-   if((fscanf(fd, "%d", &tmppid) != 1) || tmppid < 1) 
+   else if((fscanf(fd, "%d", &tmppid) != 1) || tmppid < 1) 
    {
       msgln(unlog, 0, "Warning : Cannot get current maximum PID, error parsing %s format. Using default value %d", path, * newmaxpid) ;
-      return;
    } 
    else 
    {
@@ -127,7 +125,6 @@ int checkps(int tmppid, int checks)
    char command[60];
 
 
-   FILE *fich_tmp ;
 
 // printf("in --> checkps\n");   // DEBUG
 
@@ -136,6 +133,8 @@ int checkps(int tmppid, int checks)
 
    if (PS_PROC == (checks & PS_PROC)) 
    {
+      FILE *fich_tmp ;
+
       sprintf(command,COMMAND,tmppid) ;
 
       fich_tmp=popen (command, "r") ;
@@ -278,7 +277,7 @@ void printbadpid (int tmppid)
    struct stat buffer;
    FILE *cmdfile ;
    char cmdcont[1000], fmtstart[128];
-   int cmdok = 0, cmdok2 = 0;
+   int cmdok = 0 ;
 
    found_HP = 1;
    sprintf(fmtstart,"Found HIDDEN PID: %i", tmppid) ;
@@ -308,16 +307,17 @@ void printbadpid (int tmppid)
    }
    
    {  // try to readlink the exe
-      ssize_t length ;
 
       sprintf(cmd,"/proc/%i/exe",tmppid);
       statuscmd = lstat(cmd, &buffer);
-//    printf("%s",cmd) ; //DEBUG
-//      printf("\tstatuscmd : %d\n",statuscmd) ; //DEBUG
+      // printf("%s",cmd) ; //DEBUG
+      // printf("\tstatuscmd : %d\n",statuscmd) ; //DEBUG
       if (statuscmd == 0) 
       {
+         ssize_t length ;
+
          length = readlink(cmd, cmdcont, 1000) ;
-//         printf("\tLength : %0d\n",(int)length) ; //DEBUG
+         // printf("\tLength : %0d\n",(int)length) ; //DEBUG
          if (-1 != length) 
          {
             cmdcont[length] = 0;   // terminate the string
@@ -343,11 +343,15 @@ void printbadpid (int tmppid)
          cmdfile=fopen (cmd, "r") ;
          if (cmdfile != NULL) 
          {
-//       printf("\tCmdFile : %s\n",cmd) ; //DEBUG
+            int cmdok2 = 0 ;
+
+            // printf("\tCmdFile : %s\n",cmd) ; //DEBUG
             while ((NULL != fgets (cmdcont, 1000, cmdfile)) && 0 == cmdok2) 
             {
-               cmdok2++;
-//               printf("\tLastChar : %x\n",cmdcont[strlen(cmdcont)]) ; //DEBUG
+               // EXPLAIN-ME : why do we use a while and then read only one line ?
+               cmdok2++; 
+               
+               // printf("\tLastChar : %x\n",cmdcont[strlen(cmdcont)]) ; //DEBUG
                if (cmdcont[strlen(cmdcont)-1] == '\n')
                {
                   cmdcont[strlen(cmdcont)-1] = 0 ;  // get rid of newline
@@ -377,14 +381,15 @@ void printbadpid (int tmppid)
    // try to print some useful info about the hidden process
    // does not work well for kernel processes/threads and deamons
    {
-      FILE *fich_tmp ;
 
       sprintf(cmd,"/proc/%i/environ",tmppid);
       statuscmd = stat(cmd, &buffer);
       if (statuscmd == 0) 
       {
+         FILE *fich_tmp ;
+
          sprintf(cmd,"cat /proc/%i/environ | tr \"\\0\" \"\\n\" | grep -w 'USER'",tmppid) ;
-   //      printf(cmd) ;
+         // printf(cmd) ;
          fich_tmp=popen (cmd, "r") ;
          if (fich_tmp == NULL) 
          {
@@ -403,7 +408,7 @@ void printbadpid (int tmppid)
          pclose(fich_tmp);
 
          sprintf(cmd,"cat /proc/%i/environ | tr \"\\0\" \"\\n\" | grep -w 'PWD'",tmppid) ;
-   //      printf(cmd) ;
+         // printf(cmd) ;
          fich_tmp=popen (cmd, "r") ;
          if (fich_tmp == NULL) 
          {
@@ -444,6 +449,7 @@ void usage(char * command)
    printf("   -f          log result into unhide-linux.log file\n");
    printf("   -o          same as '-f'\n");
    printf("   -d          do a double check in brute test\n");
+   printf("   -u          inhibit stdout buffering of subprocesses (needs stdbuf command)\n\n");
    printf("Test_list :\n");
    printf("   Test_list is one or more of the following\n");
    printf("   Standard tests :\n");
@@ -474,6 +480,7 @@ void usage(char * command)
    printf("      checksysinfo\n");
    printf("      checksysinfo2\n");
    printf("      checksysinfo3\n");
+   fflush(stdout) ;
 }
 
 /*
@@ -496,6 +503,7 @@ void parse_args(int argc, char **argv)
       {"verbose",            no_argument,      0,                 'v'},
       {"help",               no_argument,      0,                 'h'},
       {"version",            no_argument,      0,                 'V'},
+      {"human-frienly",      no_argument,      0,                 'H'},
       {0, 0, 0, 0}
    };
 
@@ -504,7 +512,7 @@ void parse_args(int argc, char **argv)
       /* getopt_long stores the option index here. */
       int option_index = 0;
 
-      c = getopt_long (argc, argv, "dformhvV",
+      c = getopt_long (argc, argv, "dformhvVHu",
                         long_options, &option_index);
 
       /* Detect the end of the options. */
@@ -526,7 +534,7 @@ void parse_args(int argc, char **argv)
          printf ("\n");
          break ;
       case 'd' :
-         brutesimplecheck = FALSE;
+         brutesimplecheck = FALSE ;
          break ;
       case 'h' :
          usage(argv[0]) ;
@@ -539,17 +547,24 @@ void parse_args(int argc, char **argv)
          logtofile = 1 ;
          break ;
       case 'm' :
-         morecheck = TRUE;
-         verbose = TRUE;
+         morecheck = TRUE ;
+         verbose = TRUE ;
          break ;
       case 'r' :
-         RTsys = TRUE;
+         RTsys = TRUE ;
+         break ;
+
+      case 'u' :
+         unbufferedstdout = TRUE ;
          break ;
       case 'v' :
          verbose++ ; ;
          break ;
       case 'V' :
          exit (0) ;
+         break ;
+      case 'H' :
+         humanfriendly = TRUE ;
          break ;
       case '?' :     // invalid option
          exit (2) ;
@@ -573,6 +588,8 @@ void parse_args(int argc, char **argv)
       strncat(used_options, "RTsys ", 1000-1-strlen(used_options));
    if (logtofile)
       strncat(used_options, "logtofile ", 1000-1-strlen(used_options));
+   if (unbufferedstdout)
+      strncat(used_options, "unbufferedstdout ", 1000-1-strlen(used_options));
       
    // Process list of tests to do
    for (index = optind; index < argc; index++)
@@ -712,6 +729,7 @@ void parse_args(int argc, char **argv)
       else 
       { 
          printf("Unknown argument\n") ; usage(argv[0]); exit(0);
+         fflush(stdout) ;
       }
    }
 
@@ -723,7 +741,14 @@ int main (int argc, char *argv[])
 {
 int i;
 
+   // try to unbufferd  pipe :
+   // setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+   // setvbuf(stdout, (char *)NULL, _IONBF, 0);
+   
    printf(header) ;
+   fflush(stdout) ;
+   // fflush(stdout) ;
+   
    if(getuid() != 0){
       die(unlog, "You must be root to run %s !", argv[0]) ;
    }
@@ -771,7 +796,7 @@ int i;
    
    if (logtofile == 1) 
    {
-      unlog = init_log(logtofile, header, "unhide-linux") ;
+      unlog = init_log(logtofile, header, "unhide-linux", humanfriendly) ;
    }
    msgln(unlog, 0, used_options) ;
 
@@ -789,7 +814,12 @@ int i;
    }
 
    if (logtofile == 1) {
-      close_log(unlog, "unhide-linux") ;
+      close_log(unlog, "unhide-linux", humanfriendly) ;
    }
+   if (humanfriendly == TRUE)
+   {
+      puts("Done !\n") ;
+   }
+   fflush(stdout) ;
    return found_HP;
 }

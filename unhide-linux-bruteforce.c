@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  Minimalist thread function for brute test.
  *  Set tid with the pid of the created thread. 
  */
-void *funcionThread (void *parametro) 
+void *functionThread (void *parametro) 
 {
 
    tid = (pid_t) syscall (SYS_gettid);
@@ -163,7 +163,7 @@ void brute(void)
       pthread_t idHilo;
       int error;
 
-      error = pthread_create (&idHilo, NULL, funcionThread, NULL);
+      error = pthread_create (&idHilo, NULL, functionThread, NULL);
       if (error != 0)
       {
          die(unlog, "Error: Cannot create thread ! Exiting.");
@@ -187,7 +187,7 @@ void brute(void)
          pthread_t idHilo;
          int error;
 
-         error = pthread_create (&idHilo, NULL, funcionThread, NULL);
+         error = pthread_create (&idHilo, NULL, functionThread, NULL);
          if (error != 0)
          {
             die(unlog, "Error: Cannot create thread ! Exiting.");

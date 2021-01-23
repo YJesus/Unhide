@@ -79,53 +79,39 @@ void checkps(int tmppid) {
 
 	FILE *fich_tmp ;
 
-	fich_tmp=popen (COMMAND, "r") ;
-
-
-	while (!feof(fich_tmp) && ok == 0) {
-
-		fgets(pids, 30, fich_tmp);
-
-		sprintf(compare,"%i\n",tmppid);
-
-		if (strcmp(pids, compare) == 0) {ok = 1;}
-
-
+	if (NULL != (fich_tmp = popen (COMMAND, "r")))
+    {
+        while (!feof(fich_tmp) && ok == 0) 
+        {
+            fgets(pids, 30, fich_tmp);
+            sprintf(compare,"%i\n",tmppid);
+            if (strcmp(pids, compare) == 0) {ok = 1;}
         }
-
-	pclose(fich_tmp);
+        pclose(fich_tmp);
+    }
 
 	if ( ok == 0 ) {
-
 		int statuscmd ;
 		char cmd[100] ;
-
 		struct stat buffer;
 
 		printf ("Found HIDDEN PID: %i\n", tmppid) ;
-
 		sprintf(cmd,"/proc/%i/cmdline",tmppid);
-
 		statuscmd = stat(cmd, &buffer);
-
 		if (statuscmd == 0) {
-
 			FILE *cmdfile ;
 			char cmdcont[1000];
 
-			cmdfile=fopen (cmd, "r") ;
-
-
-			while (!feof (cmdfile)) {
-
-				fgets (cmdcont, 1000, cmdfile);
-				printf ("Command: %s\n\n", cmdcont);
-
-			}
+			if (NULL != (cmdfile = fopen (cmd, "r")))
+      {
+          while (!feof (cmdfile)) {
+              fgets (cmdcont, 1000, cmdfile);
+              printf ("Command: %s\n\n", cmdcont);
+          }
+          fclose(cmdfile) ;
+      }
 		}
-
 	}
-
 }
 
 void checkproc() {
@@ -231,12 +217,13 @@ void checkgetsid() {
 
 int main (int argc, char *argv[]) {
 
-	strncpy(scratch,"Unhide-posix 20130526\n", 1000) ;
-	strncat(scratch, "Copyright © 2013 Yago Jesus & Patrick Gouin\n", 1000);
-	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", 1000);
-	strncat(scratch, "http://www.unhide-forensics.info\n\n", 1000);
+	strncpy(scratch,"Unhide-posix 20130526\n", sizeof(scratch)-1) ;
+	strncat(scratch, "Copyright © 2013 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "NOTE : This is legacy version of unhide, it is intended\n\
-       for systems using Linux < 2.6 or other UNIX systems\n\n", 1000);
+       for systems using Linux < 2.6 or other UNIX systems\n\n", sizeof(scratch)-strlen(scratch)-1);
+        scratch[999] = 0 ;
 	fputs(scratch, stdout);
 
 

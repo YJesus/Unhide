@@ -41,8 +41,8 @@ extern void warnln(int verbose, FILE * unlog, const char* fmt, ...) ;
 extern void die(FILE * unlog, const char* fmt, ...) ;
 
 // Initialize and write a header to the log file. 
-extern FILE *init_log(int logtofile, const char *header, const char *basename) ;
+extern FILE *init_log(int logtofile, const char *header, const char *basename, int hfriend) ;
 
 // Write a footer and close a log file.
-extern void close_log(FILE *fh, const char *basename) ;
+extern void close_log(FILE *fh, const char *basename, int hfriend) ;
 

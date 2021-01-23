@@ -40,6 +40,8 @@ void vfmsg(FILE * unlog, FILE* fp, const char* fmt, va_list ap)
 
    vsnprintf(buf, BUFSIZ, fmt, ap);
    fputs(buf, fp);
+   fflush(fp) ;
+   // fputs(buf, stderr);
 
    if (NULL != unlog)
       fputs(buf, unlog);
@@ -56,13 +58,14 @@ void msgln(FILE * unlog, int indent, const char* fmt, ...)
 
    if(1 == indent)
    {
-      strncpy(buf, "\t", BUFSIZ);
-      strncat(buf, fmt, BUFSIZ-strlen(buf));
+      strncpy(buf, "\t", BUFSIZ-1);
+      strncat(buf, fmt, BUFSIZ-strlen(buf)-1);
    }
    else
    {
-      strncpy(buf, fmt, BUFSIZ);
+      strncpy(buf, fmt, BUFSIZ-1);
    }
+   buf[BUFSIZ-1] = 0 ;
    strncat(buf, "\n", BUFSIZ-1-strlen(buf));
 
    va_start(ap, fmt);
@@ -135,7 +138,7 @@ void die(FILE * unlog, const char* fmt, ...)
 /*
  * Initialize and write a header to the log file. 
  */
-FILE *init_log(int logtofile, const char *header, const char *basename)
+FILE *init_log(int logtofile, const char *header, const char *basename, int hfriend)
 {
    FILE *fh ;
    char filename[PATH_MAX] ;
@@ -150,7 +153,7 @@ FILE *init_log(int logtofile, const char *header, const char *basename)
 
    scantime = time(NULL);
    tmPtr = localtime(&scantime);
-   sprintf(filename, "%s_%4d-%02d-%02d.%s", basename, tmPtr->tm_year+1900, tmPtr->tm_mon + 1, tmPtr->tm_mday, "log"  );
+   sprintf(filename, "%s_%4d-%02d-%02d_%02dh%02dm%02ds.%s", basename, tmPtr->tm_year+1900, tmPtr->tm_mon + 1, tmPtr->tm_mday, tmPtr->tm_hour, tmPtr->tm_min, tmPtr->tm_sec, "log"  );
 
    fh = fopen(filename, "w");
 
@@ -166,11 +169,16 @@ FILE *init_log(int logtofile, const char *header, const char *basename)
    strftime( cad, 80, "%H:%M:%S, %F", tmPtr );
 
    fprintf(fh, "\n%s scan starting at: %s\n", basename, cad) ;
+   if (hfriend != 0)
+   {
+      printf("\n%s scan starting at: %s\n", basename, cad) ;
+   }
+   fflush(stdout) ;
    return(fh);
 }
 
 /* Write a footer and close the log file. */
-void close_log(FILE *fh, const char *basename)
+void close_log(FILE *fh, const char *basename, int hfriend)
 {
 
    if (NULL == fh)
@@ -187,6 +195,11 @@ void close_log(FILE *fh, const char *basename)
    strftime( cad, 80, "%H:%M:%S, %F", tmPtr );
 
    fprintf(fh, "%s scan ending at: %s\n", basename, cad );
+   if (hfriend != 0)
+   {
+      printf("%s scan ending at: %s\n", basename, cad );
+   }
+   fflush(stdout) ;
    fclose(fh);
 }
 

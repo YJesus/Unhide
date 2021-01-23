@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <time.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <ctype.h>
 
 #include "unhide-output.h"
 #include "unhide-tcp.h"
@@ -44,6 +45,8 @@ const char header[] =
 int verbose = 0;
 int use_fuser = 0;
 int use_lsof = 0;
+int humanfriendly = FALSE ;
+
 #ifdef __linux__
    int use_ss = 1;   // on Linux use ss by default
 #else
@@ -179,18 +182,30 @@ void print_port(enum Proto proto, int port)
  * If not, report it and optionnally run lsof and/or fuser
  * to show more info.
  */
+# define STR_PORT_LENGTH  6   // with ending null char
 int checkoneport(int port, char command[], enum Proto proto)
 {
    int ok = 0;
-   char ports[30];
-   char compare[100];
 
    FILE *fich_tmp ;
 
    if (NULL != (fich_tmp=popen (command, "r")))
    {
-      sprintf(compare,"%i\n",port);
-      while ((NULL != fgets(ports, 30, fich_tmp)) && ok == 0) {
+      char ports[2 * STR_PORT_LENGTH];    // port number reported by ss or netstat
+      char compare[2 * STR_PORT_LENGTH];  // port number to verify.
+      char *port_p ;
+
+      // sprintf(compare,"%i\n",port);
+      sprintf(compare,"%i",port);
+      // or itoa(i, compare, 10) ;
+      while ((NULL != fgets(ports, 2 * STR_PORT_LENGTH - 2, fich_tmp)) && ok == 0) {
+         ports[2 * STR_PORT_LENGTH - 1] = 0 ;   // force string terminaison
+         port_p = ports + strlen(ports) ;
+         while ((port_p > ports) && !isdigit(*port_p))
+         {
+            *port_p = 0 ; // replace all non numerical char by end of string !
+            port_p--;
+         } 
          if (strcmp(ports, compare) == 0) {ok = 1;}
       }
       pclose(fich_tmp);
@@ -377,6 +392,7 @@ void usage(char * command) {
    printf("   -o          log result into unhide-tcp.log file\n");
    printf("   -s          use very quick version for server with lot of opened ports\n");
    printf("   -n          use netstat instead of ss\n");
+   fflush(stdout) ;
 }
 
 /*
@@ -400,6 +416,7 @@ void parse_args(int argc, char **argv)
          We distinguish them by their indices. */
       {"help",     no_argument,      0,        'h'},
       {"version",  no_argument,      0,        'V'},
+      {"version",  no_argument,      0,        'H'},
       {0, 0, 0, 0}
    };
 
@@ -408,7 +425,7 @@ void parse_args(int argc, char **argv)
       /* getopt_long stores the option index here. */
       int option_index = 0;
 
-      c = getopt_long (argc, argv, "Vvhflosn",
+      c = getopt_long (argc, argv, "VvhHflosn",
                         long_options, &option_index);
 
       /* Detect the end of the options. */
@@ -454,6 +471,9 @@ void parse_args(int argc, char **argv)
       case 'V' :
          exit (0) ;
          break ;
+      case 'H' :
+         humanfriendly = TRUE ;
+         break ;
       case '?' :     // invalid option
          exit (2) ;
          break ;
@@ -473,7 +493,7 @@ void parse_args(int argc, char **argv)
    if (use_fuser)
       strncat(used_options, "use_fuser ", 1000-1-strlen(used_options));
    if (!use_ss)
-      strncat(used_options, "use_netscape ", 1000-1-strlen(used_options));
+      strncat(used_options, "use_netstat ", 1000-1-strlen(used_options));
    if (use_quick)
       strncat(used_options, "use_quick ", 1000-1-strlen(used_options));
    if (logtofile)
@@ -492,6 +512,7 @@ int main(int argc, char  **argv)
    int ret_code = 0;
 
    printf(header) ;
+   fflush(stdout) ;
 
    if(getuid() != 0){
       die(unlog, "You must be root to run %s !", argv[0]) ;
@@ -501,7 +522,7 @@ int main(int argc, char  **argv)
    
    if (1 == logtofile) 
    {
-      unlog = init_log(logtofile, header, "unhide-tcp") ;
+      unlog = init_log(logtofile, header, "unhide-tcp", humanfriendly) ;
    }
    msgln(unlog, 0, used_options) ;
 
@@ -546,7 +567,7 @@ int main(int argc, char  **argv)
 
    if (logtofile == 1)
    {
-      close_log(unlog, "unhide-tcp") ;
+      close_log(unlog, "unhide-tcp", humanfriendly) ;
    }
    return(ret_code);
 

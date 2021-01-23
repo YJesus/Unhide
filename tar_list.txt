@@ -26,7 +26,11 @@ unhide-output.h
 unhide-posix.c
 unhide_rb.c
 unhide-tcp.c
-unhide-tcp-simple-check.c
 unhide-tcp-fast.c
 unhide-tcp.h
-
+unhideGui.py
+LICENSE
+build_all.sh
+ps
+ss
+ss-ref

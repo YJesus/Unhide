@@ -61,7 +61,7 @@ void checkgetpriority(void)
       int which = PRIO_PROCESS;
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -79,7 +79,7 @@ void checkgetpriority(void)
          continue;
       }
 
-      errno=0;
+      errno = 0;
       ret = getpriority(which, syspids);
       if ( errno != 0) 
       {
@@ -101,7 +101,7 @@ void checkgetpgid(void)
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -119,7 +119,7 @@ void checkgetpgid(void)
          continue;
       }
 
-      errno=0;
+      errno = 0;
       ret = getpgid(syspids);
       if ( errno != 0 ) 
       {
@@ -137,11 +137,11 @@ void checkgetsid(void)
    int syspids ;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through getsid() scanning\n") ;
-   for ( syspids = 1; syspids <= maxpid; syspids = syspids +1 ) 
+   for ( syspids = 1; syspids <= maxpid; syspids = syspids + 1 ) 
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -157,7 +157,7 @@ void checkgetsid(void)
       {
          continue;
       }
-      errno=0;
+      errno = 0;
       ret = getsid(syspids);
       if ( errno != 0) 
       {
@@ -177,11 +177,11 @@ void checksched_getaffinity(void)
    cpu_set_t mask;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through sched_getaffinity() scanning\n") ;
-   for ( syspids = 1; syspids <= maxpid; syspids = syspids +1 ) 
+   for ( syspids = 1; syspids <= maxpid; syspids = syspids + 1 ) 
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -197,7 +197,7 @@ void checksched_getaffinity(void)
       {
          continue;
       }
-      errno=0;
+      errno = 0;
       ret = sched_getaffinity(syspids, sizeof(cpu_set_t), &mask);
       if (errno != 0) 
       {
@@ -217,11 +217,11 @@ void checksched_getparam(void)
    struct sched_param param;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through sched_getparam() scanning\n") ;
-   for ( syspids = 1; syspids <= maxpid; syspids = syspids +1 ) 
+   for ( syspids = 1; syspids <= maxpid; syspids = syspids + 1 ) 
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) {
          continue;
@@ -238,7 +238,7 @@ void checksched_getparam(void)
          continue;
       }
 
-      errno=0;
+      errno = 0;
       ret = sched_getparam(syspids, &param);
       if ( errno != 0) 
       {
@@ -256,11 +256,11 @@ void checksched_getscheduler(void)
    int syspids ;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through sched_getscheduler() scanning\n") ;
-   for ( syspids = 1; syspids <= maxpid; syspids = syspids +1 ) 
+   for ( syspids = 1; syspids <= maxpid; syspids = syspids + 1 ) 
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) {
          continue;
@@ -277,7 +277,7 @@ void checksched_getscheduler(void)
          continue;
       }
 
-      errno=0;
+      errno = 0;
       ret = sched_getscheduler(syspids);
       if ( errno != 0) 
       {
@@ -297,11 +297,11 @@ void checksched_rr_get_interval(void)
    struct timespec tp;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through sched_rr_get_interval() scanning\n") ;
-   for ( syspids = 1; syspids <= maxpid; syspids = syspids +1 ) 
+   for ( syspids = 1; syspids <= maxpid; syspids = syspids + 1 ) 
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -319,7 +319,7 @@ void checksched_rr_get_interval(void)
          continue;
       }
 
-      errno=0;
+      errno = 0;
       ret = sched_rr_get_interval(syspids, &tp);
       if ( errno != 0) 
       {
@@ -341,7 +341,7 @@ void checkkill(void)
    {
       // int ret;
 
-      errno= 0 ;
+      errno = 0 ;
       // avoid ourselves
       if (syspids == mypid) 
       {
@@ -359,7 +359,7 @@ void checkkill(void)
          continue;
       }
 
-      errno= 0 ;
+      errno = 0 ;
       ret = kill(syspids, 0);
       if ( errno != 0) 
       {
@@ -380,9 +380,9 @@ void checkallnoprocps(void)
    struct timespec tp;
    struct sched_param param;
    cpu_set_t mask;
-   int found=0;
-   int found_killbefore=0;
-   int found_killafter=0;
+   int found = 0;
+   int found_killbefore = 0;
+   int found_killafter = 0;
 
    msgln(unlog, 0, "[*]Searching for Hidden processes through  comparison of results of system calls\n") ;
    for ( syspids = 1; syspids <= maxpid; syspids++ ) 
@@ -393,45 +393,45 @@ void checkallnoprocps(void)
          continue;
       }
 
-      found=0;
-      found_killbefore=0;
-      found_killafter=0;
+      found = 0;
+      found_killbefore = 0;
+      found_killafter = 0;
 
-      errno=0;
+      errno = 0;
       ret = kill(syspids, 0);
-      if (errno == 0) found_killbefore=1;
+      if (errno == 0) found_killbefore = 1;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = getpriority(PRIO_PROCESS, syspids);
       if (errno == 0) found++;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = getpgid(syspids);
       if (errno == 0) found++;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = getsid(syspids);
       if (errno == 0) found++;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = sched_getaffinity(syspids, sizeof(cpu_set_t), &mask);
       if (errno == 0) found++;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = sched_getparam(syspids, &param);
       if (errno == 0) found++;
 
-      errno= 0 ;
+      errno = 0 ;
       ret = sched_getscheduler(syspids);
       if (errno == 0) found++;
 
-      errno=0;
+      errno = 0;
       ret = sched_rr_get_interval(syspids, &tp);
       if (errno == 0) found++;
 
-      errno=0;
+      errno = 0;
       ret = kill(syspids, 0);
-      if (errno == 0) found_killafter=1;
+      if (errno == 0) found_killafter = 1;
 
 
       /* these should all agree, except if a process went or came in the middle */
@@ -451,45 +451,62 @@ void checkallnoprocps(void)
    }
 }
 
+
+void genpscmd(char *cmd)
+{
+   if (unbufferedstdout == TRUE)
+   { 
+      strcpy(cmd, NO_BUF_PIPE SYS_COMMAND) ;
+   }
+   else
+   {
+      strcpy(cmd, SYS_COMMAND) ;
+   }
+   printf("Commande : %s\n", cmd) ;
+}
+
 void checksysinfo(void) 
 {
 
    struct sysinfo info;
-   int contador=0;
-   int resultado_antes=0;
-   int resultado_despues=0;
-   int resultado = 0;
-   int ocultos=0;
+   int procnumber = 0;
+   int initial_result = 0;
+   int final_result = 0;
+   int result = 0;
    char buffer[500];
+   char command[60];
 
-   FILE *fich_proceso ;
+   FILE *ps_fh ;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning\n") ;
 
    buffer[499] = '\0';
 
    sysinfo(&info);
-   resultado = resultado_antes=info.procs;
+   result = initial_result = info.procs;
+   
+   genpscmd(command) ;
 
-   fich_proceso=popen (SYS_COMMAND, "r") ;
-   if (fich_proceso == NULL) 
+   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning (1st variant)\n") ;
+
+   ps_fh = popen (command, "r") ;
+   if (ps_fh == NULL) 
    {
       warnln(verbose, unlog, "Couldn't run command: %s, test aborted", SYS_COMMAND) ;
       return;
    }
 
-   while (NULL != fgets(buffer, 499, fich_proceso)) 
+   while (NULL != fgets(buffer, 499, ps_fh)) 
    {
-      contador++;
+      procnumber++;
       if(verbose) 
       {
          sysinfo(&info);
-         if (resultado != info.procs) 
+         if (result != info.procs) 
          {
-            msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",info.procs,resultado) ;
-            resultado = info.procs;
+            msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",info.procs,result) ;
+            result = info.procs;
          }
-         if (verbose >=2) 
+         if (verbose >= 2) 
          {
             buffer[strlen(buffer)-1] = 0;  // get rid of \n
             snprintf(scratch, 1000, "\"%s\"",buffer) ;
@@ -497,24 +514,25 @@ void checksysinfo(void)
          }
       }
    }
-   pclose(fich_proceso);
+   pclose(ps_fh);
 
    sysinfo(&info);
-   resultado_despues=info.procs;
+   final_result = info.procs;
    if(verbose >= 1) {
-      if (resultado != resultado_despues) {
-         msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",resultado_despues,resultado) ;
+      if (result != final_result) {
+         msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",final_result,result) ;
       }
    }
 
 
-   if (resultado_antes == resultado_despues) /* otherwise intermittent activity.. */
+   if (initial_result == final_result) /* otherwise intermittent activity.. */
    {
+      int hidennumber = 0;
       // We add one as ps sees itself and not sysinfo.
-      ocultos=resultado_despues  + 1 - contador ;
+      hidennumber = final_result  + 1 - procnumber ;
 
-      if (ocultos != 0) {
-         msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes",abs(ocultos), resultado_despues,contador-1) ;
+      if (hidennumber != 0) {
+         msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes",abs(hidennumber), final_result,procnumber-1) ;
          found_HP = 1;
       }
    }
@@ -536,41 +554,44 @@ void checksysinfo2()
 {
 
    struct sysinfo info;
-   int contador=0;
-   int resultado_antes=0;
-   int resultado_despues=0;
-   int resultado = 0;
-   int ocultos=0;
+   int procnumber = 0;
+   int initial_result = 0;
+   int final_result = 0;
+   int result = 0;
    char buffer[500];
+   char command[60];
 
-   FILE *fich_proceso ;
+   FILE *ps_fh ;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning\n") ;
 
    buffer[499] = '\0';
 
-   fich_proceso=popen (SYS_COMMAND, "r") ;
-   if (fich_proceso == NULL) 
+   genpscmd(command) ;
+
+   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning (2nd variant)\n") ;
+
+   ps_fh = popen (command, "r") ;
+   if (ps_fh == NULL) 
    {
       warnln(verbose, unlog, "Couldn't run command: %s, test aborted", SYS_COMMAND) ;
       return;
    }
 
    sysinfo(&info);
-   resultado = resultado_antes = info.procs;
+   result = initial_result = info.procs;
 
-   while (NULL != fgets(buffer, 499, fich_proceso)) 
+   while (NULL != fgets(buffer, 499, ps_fh)) 
    {
-      contador++;
+      procnumber++;
       if(verbose) 
       {
          sysinfo(&info);                     // DEBUG
-         if (resultado != info.procs) 
+         if (result != info.procs) 
          {      // DEBUG
-            msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",info.procs,resultado) ;
-            resultado = info.procs;          // DEBUG
+            msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)",info.procs,result) ;
+            result = info.procs;          // DEBUG
          }
-         if (verbose >=2) 
+         if (verbose >= 2) 
          {
             buffer[strlen(buffer)-1] = 0;  // get rid of \n
             snprintf(scratch, 1000, "\"%s\"",buffer) ;
@@ -580,23 +601,25 @@ void checksysinfo2()
    }
 
    sysinfo(&info);
-   resultado_despues=info.procs;
+   final_result = info.procs;
    if(verbose >= 1) 
    {
-      if (resultado != resultado_despues) 
+      if (result != final_result) 
       {
-         msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)", resultado_despues, resultado) ;
+         msgln(unlog, 1, "\tWARNING : info.procs changed during test : %d (was %d)", final_result, result) ;
       }
    }
 
-   pclose(fich_proceso);
+   pclose(ps_fh);
 
-   if (resultado_antes == resultado_despues)   /* otherwise intermittent activity.. */
+   if (initial_result == final_result)   /* otherwise intermittent activity.. */
    {
-      ocultos=resultado_despues - contador;
-      if (ocultos != 0) 
+      int hidennumber = 0;
+
+      hidennumber = final_result - procnumber;
+      if (hidennumber != 0) 
       {
-         msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(ocultos), resultado_despues,contador) ;
+         msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(hidennumber), final_result,procnumber) ;
          found_HP = 1;
       }
    }
@@ -617,39 +640,44 @@ void checksysinfo3()
 {
 
    struct sysinfo info;
-   int contador=0;
-   int resultado_antes=0;
-   int resultado_despues=0;
-   int ocultos=0;
    char buffer[500];
+   char command[60];
 
-   FILE *fich_proceso ;
+   FILE *ps_fh ;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning\n") ;
 
    buffer[499] = '\0';
 
-   if (NULL != (fich_proceso=popen (SYS_COMMAND, "r"))) 
+   genpscmd(command) ;
+
+   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning (3rd variant)\n") ;
+   
+   if (NULL != (ps_fh = popen (command, "r"))) 
    {
+      int procnumber = 0;
+      int initial_result = 0;
+      int final_result = 0;
 
       sysinfo(&info);
-      resultado_antes = info.procs;
+      initial_result = info.procs;
 
-      while (NULL != fgets(buffer, 499, fich_proceso)) 
+      while (NULL != fgets(buffer, 499, ps_fh)) 
       {
-         contador++;
+         procnumber++;
       }
 
       sysinfo(&info);
-      resultado_despues=info.procs;
-      pclose(fich_proceso);
+      final_result = info.procs;
+      pclose(ps_fh);
 
-      if (resultado_antes == resultado_despues)   /* otherwise intermittent activity.. */
+      if (initial_result == final_result)   /* otherwise intermittent activity.. */
       {
-         ocultos=resultado_despues - contador;
-         if (ocultos != 0) 
+         int hidennumber = 0;
+
+         hidennumber = final_result - procnumber;
+         if (hidennumber != 0) 
          {
-            msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(ocultos), resultado_despues,contador) ;
+            msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(hidennumber), final_result,procnumber) ;
             found_HP = 1;
          }
       }
@@ -682,29 +710,35 @@ void checksysinfo4()
 {
 
    struct sysinfo info;
-   int contador=0;
-   int resultado_antes=0;
-   int resultado_despues=0;
-   int ocultos=0;
 //   char buffer[500];
    ssize_t read_size, avail ;
    char *buf_pt ;
-   int fd ;
+   char command[60];
 
-   FILE *fich_proceso ;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning\n") ;
+   FILE *ps_fh ;
+
 
 //   buffer[499] = '\0';
 
    buf_pt = big_buffer ;
    read_size = 0 ;
    avail = 32768*6 ;
-   if (NULL != (fich_proceso=popen (SYS_COMMAND, "r"))) 
+
+   genpscmd(command) ;
+
+   msgln(unlog, 0, "[*]Searching for Hidden processes through sysinfo() scanning (4th variant)\n") ;
+
+   if (NULL != (ps_fh = popen (command, "r"))) 
    {
-      fd = fileno(fich_proceso) ;
+      int procnumber = 0;
+      int initial_result = 0;
+      int final_result = 0;
+      int fd ;
+
+      fd = fileno(ps_fh) ;
       sysinfo(&info);
-      resultado_antes = info.procs;
+      initial_result = info.procs;
 
       while ((read_size = read(fd, buf_pt, avail))) 
       {
@@ -716,23 +750,25 @@ void checksysinfo4()
       *buf_pt = 0 ;
       
       sysinfo(&info);
-      resultado_despues=info.procs;
-      pclose(fich_proceso);
+      final_result = info.procs;
+      pclose(ps_fh);
 
       buf_pt = big_buffer ;
       while (*buf_pt)
       {
          if (*buf_pt == '\n')
-            contador++ ;
+            procnumber++ ;
          buf_pt++ ;
       }
 
-      if (resultado_antes == resultado_despues)   /* otherwise intermittent activity.. */
+      if (initial_result == final_result)   /* otherwise intermittent activity.. */
       {
-         ocultos=resultado_despues - contador;
-         if (ocultos != 0) 
+         int hidennumber = 0;
+
+         hidennumber = final_result - procnumber;
+         if (hidennumber != 0) 
          {
-            msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(ocultos), resultado_despues,contador) ;
+            msgln(unlog, 1, "%i HIDDEN Processes Found\tsysinfo.procs reports %d processes and ps sees %d processes", abs(hidennumber), final_result,procnumber) ;
             found_HP = 1;
          }
       }

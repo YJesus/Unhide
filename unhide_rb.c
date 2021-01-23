@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int maxpid = 32768;
 
 // Temporary string for output
-char scratch[1000] ;
+char scratch[1500] ;
 char cmdcont[1000] ;
 
 unsigned int proc_parent_pids[65536] ;
@@ -62,7 +62,7 @@ char *proc_tasks[65536];
 char *ps_pids[65536];
 char *messages_pids[65536];
 char message[1000] ;
-char description[1000] ;
+char description[1100] ;
 int ps_count = 0 ;
 
 const char *pid_detectors[] =
@@ -162,7 +162,16 @@ void setup(int phase)
                size_t length ;
                char myexe[512] ;
 
+      // Warning here as gcc can't know that directory (task number) contains far less than 94 char.
+#ifdef __GNUC__
+   #pragma GCC diagnostic push
+   #pragma GCC diagnostic ignored "-Wformat-overflow="
+#endif
                sprintf(myexe,"%s%s/exe",mypath,directory);
+#ifdef __GNUC__
+   #pragma GCC diagnostic pop
+#endif
+
 //               printf("%s\n",myexe);
 
                length = readlink(myexe, cmdcont, 1000) ;
@@ -276,15 +285,19 @@ int get_suspicious_pids(int pid_num)
          snprintf(scratch, 1000, "[*] Error: cannot get current maximum PID: %s\n", strerror(errno));
          fputs(scratch, stdout);
       }
-      else if((fscanf(fd, "%d", &tmppid) != 1) || tmppid < 1)
+      else 
       {
-         snprintf(scratch, 1000, "[*] cannot get current maximum PID: Error parsing %s format\n", path);
-         fputs(scratch, stdout);
-      } else
-      {
-         maxpid = tmppid;
+         if((fscanf(fd, "%d", &tmppid) != 1) || tmppid < 1)
+         {
+            snprintf(scratch, 1000, "[*] cannot get current maximum PID: Error parsing %s format\n", path);
+            fputs(scratch, stdout);
+         }
+         else
+         {
+            maxpid = tmppid;
+         }
+         fclose(fd) ;
       }
-      fclose(fd) ;
 
       pid_min = 1 ;
       pid_max = maxpid ;
@@ -412,14 +425,18 @@ int get_suspicious_pids(int pid_num)
          if (FALSE == existence_consensus)
          {
             if (TRUE == pid_exists[index])
+            {
                suspicious = TRUE ;
                break ;
+            }
          }
          else
          {
             if (FALSE == pid_exists[index])
+            {
                suspicious = TRUE ;
                break ;
+            }
          }
 
       }
@@ -483,17 +500,20 @@ int main (int argc, char *argv[])
    int found_something = FALSE ;
    int phase1_ko = FALSE ;
 
-	strncpy(scratch,"Unhide_rb 20130526\n", 1000) ;
+	strncpy(scratch,"Unhide_rb 20130526\n", sizeof(scratch)-1) ;
 
-	strncat(scratch, "Copyright © 2013 Yago Jesus & Patrick Gouin\n", 1000);
-	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", 1000);
-	strncat(scratch, "http://www.unhide-forensics.info\n\n", 1000);
-	strncat(scratch, "NOTE : This version of unhide_rb is for systems using Linux >= 2.6 \n\n", 1000);
+	strncat(scratch, "Copyright © 2013 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "NOTE : This version of unhide_rb is for systems using Linux >= 2.6 \n\n", sizeof(scratch)-strlen(scratch)-1);
+   scratch[999] = 0 ;
 	fputs(scratch, stdout);
+   fflush(stdout) ;
 
 //   printf(header) ;
    if(getuid() != 0){
       printf("You must be root to run %s !\n", argv[0]) ;
+      fflush(stdout) ;
    }
 
 
@@ -504,6 +524,7 @@ int main (int argc, char *argv[])
    printf("Unhide_rb scan starting at: %s\n", cad );
 */
    puts ("Scanning for hidden processes...") ;
+   fflush(stdout) ;
 
 // initializing memory pointers
    for (i = 0 ; i < maxpid; i++)
@@ -521,6 +542,7 @@ int main (int argc, char *argv[])
       puts("ps and sysinfo() process count mismatch:\n") ;
       printf("  ps: %d processes\n", ps_count) ;
       printf("  sysinfo(): %d processes\n", info.procs) ;
+      fflush(stdout) ;
    }
 
    phase1_ko = get_suspicious_pids(-1) ;
@@ -541,6 +563,7 @@ int main (int argc, char *argv[])
             {
                found_something = TRUE ;
                puts(message) ;
+               fflush(stdout) ;
             }
          }
       }

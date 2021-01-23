@@ -36,6 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // an extra process/thread
 #define REVERSE "ps --no-header -eL o lwp,cmd"
 
+// Avoid buffering stdout when piped.
+#define NO_BUF_PIPE "stdbuf -i0 -o0 -e0 "
+
 // Masks for the checks to do in checkps
 // =====================================
 #define PS_PROC         0x00000001
@@ -104,6 +107,8 @@ extern int verbose ;
 extern int morecheck ;
 extern int RTsys ;
 extern int brutesimplecheck ;
+extern int unbufferedstdout ;
+extern int humanfriendly ;
 
 // Found hidden proccess flag
 extern int found_HP ;
@@ -123,7 +128,7 @@ extern struct tab_test_t tab_test[MAX_TESTNUM];
 // prototypes
 // ==========
 // unhide-linux-bruteforce.c
-extern void *funcionThread (void *parametro) ;
+extern void *functionThread (void *parametro) ;
 extern void brute(void) ;
 
 // unhide-linux.c

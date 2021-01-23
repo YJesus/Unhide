@@ -57,19 +57,21 @@ void checkallquick(void)
    struct timespec tp;
    struct sched_param param;
    cpu_set_t mask;
+   int test_number = 0 ;
    int found=0;
+   int hidenflag = 0;
    int found_killbefore=0;
    int found_killafter=0;
-   char directory[100], *pathpt;
+   char directory[100];
    struct stat buffer;
-   int statusproc, statusdir, backtodir ;
+   int statusproc, statusdir ;
    char curdir[PATH_MAX] ;
    DIR *dir_fd;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through  comparison of results of system calls, proc, dir and ps\n") ;
+   msgln(unlog, 0, "[*]Searching for Hidden processes through  comparison of results of system calls, proc, dir and ps") ;
 
    // get the path where Unhide is ran from.
-   if (NULL == (pathpt = getcwd(curdir, PATH_MAX))) 
+   if (NULL == getcwd(curdir, PATH_MAX))
    {
       warnln(verbose, unlog, "Can't get current directory, test aborted.") ;
       return;
@@ -89,58 +91,69 @@ void checkallquick(void)
       found=0;
       found_killbefore=0;
       found_killafter=0;
+      test_number = 0 ;
 
       errno=0;
       ret = kill(syspids, 0);
       if (errno == 0) found_killbefore=1;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = getpriority(PRIO_PROCESS, syspids);
       if (errno == 0) found++;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = getpgid(syspids);
       if (errno == 0) found++;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = getsid(syspids);
       if (errno == 0) found++;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = sched_getaffinity(syspids, sizeof(cpu_set_t), &mask);
       if (ret == 0) found++;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = sched_getparam(syspids, &param);
       if (errno == 0) found++;
 
       errno= 0 ;
+      test_number += 1 ;
       ret = sched_getscheduler(syspids);
       if (errno == 0) found++;
 
       errno=0;
+      test_number += 1 ;
       ret = sched_rr_get_interval(syspids, &tp);
       if (errno == 0) found++;
 
       sprintf(&directory[6],"%d",syspids);
 
+      test_number += 1 ;
       statusproc = stat(directory, &buffer) ;
       if (statusproc == 0) 
       {
          found++;
       }
 
+      test_number += 1 ;
       statusdir = chdir(directory) ;
       if (statusdir == 0) 
       {
          found++;
-         if (-1 == (backtodir = chdir(curdir))) 
+         if (-1 ==  chdir(curdir))
          {
             warnln(verbose, unlog, "Can't go back to unhide directory, test aborted.") ;
             return;
          }
       }
 
+      test_number += 1 ;
       dir_fd = opendir(directory) ;
       if (NULL != dir_fd) 
       {
@@ -151,6 +164,7 @@ void checkallquick(void)
       // Avoid checkps call if nobody sees anything
       if ((0 != found) || (0 != found_killbefore)) 
       {
+         test_number += 1 ;
          if(checkps(syspids,PS_PROC | PS_THREAD)) 
          {
             found++;
@@ -161,20 +175,35 @@ void checkallquick(void)
       ret = kill(syspids, 0);
       if (errno == 0) found_killafter=1;
 
+      // printf("Nb_test : %d\n", test_number);
+      // fflush(stdout) ;
 
       /* these should all agree, except if a process went or came in the middle */
       if (found_killbefore == found_killafter) 
       {
          if ( ! ((found_killbefore == 0 && found == 0) ||
-                 (found_killbefore == 1 && found == 11)) ) 
+                 (found_killbefore == 1 && found == test_number)) ) 
          {
             printbadpid(syspids);
+            hidenflag = 1 ;
+
          }
       } /* else: unreliable */
       else 
       {
          errno = 0 ;
          warnln(verbose, unlog, "syscall comparison test skipped for PID %d.", syspids) ;
+      }
+   }
+   if (humanfriendly == TRUE)
+   {
+      if (hidenflag == 0)
+      {
+         msgln(unlog, 0, "No hidden PID found\n") ;
+      }
+      else
+      {
+         msgln(unlog, 0, "") ;
       }
    }
 }
@@ -191,9 +220,10 @@ void checkallreverse(void)
    struct timespec tp;
    struct sched_param param;
    cpu_set_t mask;
-   int not_seen=0;
-   int found_killbefore=0;
-   int found_killafter=0;
+   int not_seen = 0;
+   int hidenflag = 0;
+   int found_killbefore = 0;
+   int found_killafter = 0;
    FILE *fich_tmp;
    char command[50];
    char read_line[1024];
@@ -201,11 +231,12 @@ void checkallreverse(void)
    int  index;
    char directory[100];
    struct stat buffer;
-   int statusproc, statusdir, backtodir;
-   char curdir[PATH_MAX], *pathpt ;
+   // int statusproc, statusdir, backtodir;
+   int statusproc, statusdir;
+   char curdir[PATH_MAX] ;
    DIR *dir_fd;
 
-   msgln(unlog, 0, "[*]Searching for Fake processes by verifying that all threads seen by ps are also seen by others\n") ;
+   msgln(unlog, 0, "[*]Searching for Fake processes by verifying that all threads seen by ps are also seen by others") ;
 
    sprintf(command,REVERSE) ;
 
@@ -216,7 +247,7 @@ void checkallreverse(void)
       return;
    }
    // get the path where Unhide is ran from.
-   if (NULL == (pathpt = getcwd(curdir, PATH_MAX))) 
+   if (NULL == getcwd(curdir, PATH_MAX))
    {
       warnln(verbose, unlog, "Can't get current directory, test aborted") ;
       return;
@@ -279,7 +310,7 @@ void checkallreverse(void)
       }
       else 
       {
-         if (-1 == (backtodir = chdir(curdir))) 
+         if (-1 == chdir(curdir))
          {
             warnln(verbose, unlog, "Can't go back to unhide directory, test aborted") ;
             return;
@@ -341,16 +372,18 @@ void checkallreverse(void)
                   // printbadpid should NOT be used here : we are looking for faked process
                   msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d sys fonc", syspids, curline, not_seen) ;
                   found_HP = 1;
+                  hidenflag = 1 ;
                }
             }
          }
-         else 
+         else // even kill() doesn't see this process.
          {
             if (NULL == strstr(curline, REVERSE))  // avoid our spawned ps
             {  
                // printbadpid should NOT be used here : we are looking for faked process
                msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d sys fonc", syspids, curline, not_seen + 2) ;
                found_HP = 1;
+               hidenflag = 1 ;
             }
          }
       } /* else: unreliable */
@@ -358,6 +391,17 @@ void checkallreverse(void)
       {
          errno = 0 ;
          warnln(verbose, unlog, "reverse test skipped for PID %d", syspids) ;
+      }
+   }
+   if (humanfriendly == TRUE)
+   {
+      if (hidenflag == 0)
+      {
+         msgln(unlog, 0, "No FAKE PID found\n") ;
+      }
+      else
+      {
+         msgln(unlog, 0, "") ;
       }
    }
 
