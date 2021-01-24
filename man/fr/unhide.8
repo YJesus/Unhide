@@ -1,4 +1,4 @@
-.TH "unhide" "8" "Mars 2012" "Commandes d'administration"
+.TH "unhide" "8" "Janvier 2021" "Commandes d'administration"
 .SH "NOM"
 unhide \(em outil d'investigation post\-mortem pour trouver des processus cachés
 .SH "SYNOPSIS"
@@ -40,6 +40,14 @@ Affiche la version et sort.
 \fB \-v\fR
 Affichage prolixe, affiche les message d'avertissement (par défaut : ne pas afficher).
 Cette option peut être répétée plus d'une fois.
+.TP
+\fB\-u\fR
+Fait des écritures sans tampon (buffer) vers la sortie standard.
+Cette option peut être utile lorsque unhide est lancé par un autre processus (par exemple, elle est utilisé par unhideGui).
+.TP
+\fB\-H\fR
+Fournir un résultat légèrement plus adapté à l'humain.
+Cette option ajoute des messages de fin aux tests et indique quand aucun processus caché n'est trouvé.
 .PP
 .PP
 .SH "TEST_LIST"

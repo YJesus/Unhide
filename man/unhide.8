@@ -1,4 +1,4 @@
-.TH "UNHIDE" "8" "March 2012" "Administration commands"
+.TH "UNHIDE" "8" "January 2021" "Administration commands"
 .SH "NAME"
 unhide \(em forensic tool to find hidden processes
 .SH "SYNOPSIS"
@@ -40,6 +40,14 @@ Show version and exit
 \fB\-v\fR
 Be verbose, display warning message (default : don't display).
 This option may be repeated more than once.
+.TP
+\fB\-u\fR
+Do unbuffered write to stdout.
+This option could be useful when unhide is spawned by another process (e.g. it's used by unhideGui).
+.TP
+\fB\-H\fR
+Provide a slightly human frienlier output.
+This option adds ending messages to tests and indicates when no hidden process is found.
 .PP
 .PP
 .SH "TEST_LIST"

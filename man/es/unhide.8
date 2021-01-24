@@ -1,4 +1,4 @@
-.TH "UNHIDE" "8" "Marzo 2012" "Comandos de administración" ""
+.TH "UNHIDE" "8" "Enero 2021" "Comandos de administración" ""
 .SH "NOMBRE"
 unhide \(em Herramienta forense para descubrir procesos ocultos
 .SH "SINOPSIS"
@@ -36,6 +36,14 @@ Muestra la versión y sale
 .TP 
 \fB\-v\fR
 Fuerza la salida debug con los mensajes de error (se puede repetir varias veces \-vv)
+.TP
+\fB\-u\fR
+Realiza envíos sin buffer a la salida estándar.
+Esta opción puede ser útil cuando unhide es iniciado por otro proceso (por ejemplo, es utilizado por unhideGui).
+.TP
+\fB\-H\fR
+Proporcionar un resultado un poco más humano.
+Esta opción añade mensajes finales a las pruebas e indica cuando no se encuentran procesos ocultos.
 .PP 
 .PP 
 .SH "TEST_LIST"

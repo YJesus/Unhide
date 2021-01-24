@@ -3,6 +3,8 @@
 */
 
 /*
+Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -36,8 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // header
 const char header[] =
-       "Unhide-tcp 20210123\n"
-       "Copyright © 2013 Yago Jesus & Patrick Gouin\n"
+       "Unhide-tcp 20210124\n"
+       "Copyright © 2013-2021 Yago Jesus & Patrick Gouin\n"
        "License GPLv3+ : GNU GPL version 3 or later\n"
        "http://www.unhide-forensics.info\n";
 

@@ -3,6 +3,8 @@
 */
 
 /*
+Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -217,8 +219,8 @@ void checkgetsid() {
 
 int main (int argc, char *argv[]) {
 
-	strncpy(scratch,"Unhide-posix 20130526\n", sizeof(scratch)-1) ;
-	strncat(scratch, "Copyright © 2013 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
+	strncpy(scratch,"Unhide-posix 20210124\n", sizeof(scratch)-1) ;
+	strncat(scratch, "Copyright © 2013-2021 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "NOTE : This is legacy version of unhide, it is intended\n\

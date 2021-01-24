@@ -19,6 +19,13 @@
 
   unhide-tcp.h
   - Add definition of boolean values.
+  
+  manpages
+  - Add new options -u and -H
+  
+  All files
+  - Update GPL notive as per the recommendations of the FSF
+  - Update versions and copyright dates 
 
 2020-01
   unhide-output.c
