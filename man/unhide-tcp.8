@@ -11,7 +11,7 @@ ports that are listening but are not listed by /sbin/ss (or
 alternatively by /bin/netstat) through brute forcing of all 
 TCP/UDP ports available.
 .br
-Note1 : On FreeBSD ans OpenBSD, netstat is allways used as iproute2 doesn't exist
+Note1 : On FreeBSD ans OpenBSD, netstat is always used as iproute2 doesn't exist
 on these OS. In addition, on FreeBSD, sockstat is used instead of fuser.
 Note2 : If iproute2 is not available on the system, option -n or -s SHOULD be
 given on the command line.
@@ -64,6 +64,9 @@ if one or more hidden UDP port(s) is(are) found,
 12
 if one or more hidden TCP and UDP ports are found.
 .PP
+.SH "BUGS"
+.PP
+Report \fBunhide-tcp\fR bugs on the bug tracker on GitHub (https://github.com/YJesus/Unhide/issues)
 .SH "SEE ALSO"
 .PP
 unhide (8).
