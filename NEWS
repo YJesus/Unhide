@@ -1,3 +1,22 @@
+Changes since 20210124 :
+**********************
+
+BUG FIXES
+  - Correct two typo in english man pages
+  - Dirty hacks in unhide_rb to increase the max number of PID so it doesn't crash in 64 bits systems.
+
+ENHANCEMENTS
+  - In brute test, allocate PID tables on the heap instead of stack, as maxpid on 64 bits Linux may cause a stack overflow.
+  - unhide-linux and unhide-posix: set the default value of max_pid to 8388608.
+  
+GUI
+  - N/A
+
+MISCELLANOUS
+  - Update README.txt (build instructions and some document layout)
+  - Clearly indicate in its display header of unhide_rb that it SHOULD NOT be used for serious work.
+
+
 Changes since 20130526 :
 **********************
 

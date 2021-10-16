@@ -65,7 +65,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-int maxpid= 999999;
+# define MAX_PID 8388608
+int maxpid = MAX_PID;
 // Temporary string for output
 char scratch[1000];
 
@@ -219,7 +220,7 @@ void checkgetsid() {
 
 int main (int argc, char *argv[]) {
 
-	strncpy(scratch,"Unhide-posix 20210124\n", sizeof(scratch)-1) ;
+	strncpy(scratch,"Unhide-posix 20211016\n", sizeof(scratch)-1) ;
 	strncat(scratch, "Copyright © 2013-2021 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);

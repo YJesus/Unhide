@@ -66,32 +66,64 @@ void *functionThread (void *parametro)
 void brute(void) 
 {
    int i=0;
-   int allpids[maxpid] ;
-   int allpids2[maxpid] ;
+   int* allpids;
+   int* allpids2;
    int x;
    int y;
    int z;
 
    msgln(unlog, 0, "[*]Starting scanning using brute force against PIDS with fork()\n") ;
 
-   // PID under 301 are reserved for kernel
-   for(x=0; x < 301; x++) 
+   if ( NULL == (allpids = (int *)malloc(sizeof(int) * maxpid)))
    {
-      allpids[x] = 0 ;
-      allpids2[x] = 0 ;
+      die(unlog, "Error: Cannot allocate pid arrays ! Exiting.");
    }
 
-   for(z=301; z < maxpid; z++) 
+   if(FALSE == brutesimplecheck)   // allocate second table
    {
-      allpids[z] = z ;
-      allpids2[z] = z ;
+      if ( NULL == (allpids2 = (int *)malloc(sizeof(int) * maxpid)))
+      {
+         die(unlog, "Error: Cannot allocate pid arrays ! Exiting.");
+      }
    }
 
+
+
+   if(FALSE == brutesimplecheck)   // Init the two tables
+   {
+      // PID under 301 are reserved for kernel
+      for(x=0; x < 301; x++) 
+      {
+         allpids[x] = 0 ;
+         allpids2[x] = 0 ;
+      }
+   
+      for(z=301; z < maxpid; z++) 
+      {
+         allpids[z] = z ;
+         allpids2[z] = z ;
+      }
+   }
+   else   // Init only the first table
+   {
+      for(x=0; x < 301; x++) 
+      {
+         allpids[x] = 0 ;
+      }
+   
+      for(z=301; z < maxpid; z++) 
+      {
+         allpids[z] = z ;
+      }
+   }
+
+   // printf("Maxpid : %06d\n", maxpid);
    for (i=301; i < maxpid; i++) 
    {
       int vpid;
       int status;
 
+      // printf("Tested pid : %06d\r", i);
       errno= 0 ;
 
       if ((vpid = vfork()) == 0) 
@@ -143,19 +175,34 @@ void brute(void)
 
    msgln(unlog, 0, "[*]Starting scanning using brute force against PIDS with pthread functions\n") ;
 
-   // PID under 301 are reserved for kernel
-   for(x=0; x < 301; x++) 
+   if(FALSE == brutesimplecheck)   // Init the two tables
    {
-      allpids[x] = 0 ;
-      allpids2[x] = 0 ;
+      // PID under 301 are reserved for kernel
+      for(x=0; x < 301; x++) 
+      {
+         allpids[x] = 0 ;
+         allpids2[x] = 0 ;
+      }
+   
+      for(z=301; z < maxpid; z++) 
+      {
+         allpids[z] = z ;
+         allpids2[z] = z ;
+      }
+   }
+   else   // Init only the first table
+   {
+      for(x=0; x < 301; x++) 
+      {
+         allpids[x] = 0 ;
+      }
+   
+      for(z=301; z < maxpid; z++) 
+      {
+         allpids[z] = z ;
+      }
    }
 
-
-   for(z=301; z < maxpid; z++) 
-   {
-      allpids[z] = z ;
-      allpids2[z] = z ;
-   }
 
 
    for (i=301; i < maxpid ; i++) 
@@ -216,4 +263,12 @@ void brute(void)
          }
       }
    }
+   
+   if ( NULL != allpids)
+      free((void *)allpids) ;
+      
+   if ( NULL != allpids2)
+      free((void *)allpids2) ;
+      
+
 }

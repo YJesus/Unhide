@@ -27,15 +27,20 @@ Detecting hidden processes. Implements six main techniques
 // ---------
 
 It's a back port in C language of the ruby unhide.rb
-As the original unhide.rb, it is roughly equivalent to "unhide-linux quick reverse" :
+
+As the original unhide.rb, it is roughly equivalent to "unhide-linux quick reverse" but:
 - it makes three tests less (kill, opendir and chdir),
-- it only run /bin/ps once at start and once for the double check,
-- also, its tests are less accurate (e.g.. testing return value instead of errno),
+- it only run /bin/ps once at start and once for the double check, this gives more false positives:
+   short live processes are seen as hidden.
+- also, its tests are less accurate (e.g. testing return value instead of errno),
+- it doesn't scale well when max_PID number increases,
 - processes are only identified by their exe link (unhide-linux also use cmdline and
   "sleeping kernel process" name),
 - there's little protection against failures (failed fopen or popen by example),
 - there's no logging capability.
-It is very quick, about 80 times quicker than "unhide-linux quick reverse"
+
+On 32 bits system (with max_PID = 2^16) It is about 80 times quicker than "unhide-linux quick reverse"
+On 64 bits system (with max_PID = 2^22) It is about 2 times quicker than "unhide-linux quick reverse"
 
 // Unhide-TCP
 // ----------
@@ -92,29 +97,33 @@ man/fr/unhide-tcp.8 -- French man page of unhide-tcp
 // Compiling
 // ---------
 
-Build requires
+ Build requires :
+ --------------
    glibc-devel
    glibc-static-devel
 
-Require
-- unhide-tcp under linux :
-   iproute2
-   net-tools (for netstat)
-   lsof
-   psmisc (for fuser)
-- unhide-tcp under freeBSD :
-   sockstat
-   lsof
-   netstat
+ Requires :
+ --------
+   - unhide-tcp under linux :
+      iproute2
+      net-tools (for netstat)
+      lsof
+      psmisc (for fuser)
+   - unhide-tcp under freeBSD :
+      sockstat
+      lsof
+      netstat
    
-unhide-linux, unhide-posix, unhide_rb :
-   procps
+   - unhide-linux, unhide-posix, unhide_rb :
+      procps
 
+
+IMPORTANT : Notes that, as a forensic tool, unhide is built statically as the host system libraries may be compromised.
 
 If you ARE using a Linux kernel >= 2.6
-      gcc -Wall -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
-      gcc -Wall -O2 --static unhide_rb.c -o unhide_rb
-      gcc -Wall -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c -o unhide-tcp
+      gcc -Wall -Wextra -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
+      gcc -Wall -Wextra -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c -o unhide-tcp
+      gcc -Wall -Wextra -O2 --static unhide_rb.c -o unhide_rb
       ln -s unhide unhide-linux
 
 Else (Linux < 2.6, *BSD, Solaris and other Unice)

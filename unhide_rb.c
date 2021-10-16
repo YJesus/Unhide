@@ -52,17 +52,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define UNKNOWN      -1
 
 // sysctl kernel.pid_max
-int maxpid = 32768;
+# define MAX_PID 8388608
+int maxpid = MAX_PID;
 
 // Temporary string for output
 char scratch[1500] ;
 char cmdcont[1000] ;
 
-unsigned int proc_parent_pids[65536] ;
+unsigned int proc_parent_pids[MAX_PID] ;
 
-char *proc_tasks[65536];
-char *ps_pids[65536];
-char *messages_pids[65536];
+// char *proc_tasks[65536];
+// char *ps_pids[65536];
+// char *messages_pids[65536];
+char *proc_tasks[MAX_PID];
+char *ps_pids[MAX_PID];
+char *messages_pids[MAX_PID];
 char message[1000] ;
 char description[1100] ;
 int ps_count = 0 ;
@@ -91,6 +95,7 @@ enum n_detector
 
 void setup(int phase)
 {
+   // printf("in : %s\n", __func__) ;
    // setup part of unhide.rb
    // -----------------------
 
@@ -214,9 +219,11 @@ void setup(int phase)
          myline[999] = 0;
          if (myline[0] != '\n')
          {
+            //printf("myline = --%s--\n", myline);
             mypid = strtol(myline, NULL,10) ;
 //      printf("line+5 = --%s--\n", myline+5);   // DEBUG
-            if (NULL == strstr(myline+5,UNHIDE_RB))
+            // if (NULL == strstr(myline+5,UNHIDE_RB))
+            if (NULL == strstr(myline+7,UNHIDE_RB))
             {
                ps_count++ ;
                if (2 == phase)
@@ -241,9 +248,11 @@ void setup(int phase)
                      my_end-- ;
                   }
 //                  printf("line = --%s--\n", myline);   // DEBUG
-                  ps_pids[mypid] = malloc(strlen(myline+5)+1) ;
+                  //ps_pids[mypid] = malloc(strlen(myline+5)+1) ;
+                  ps_pids[mypid] = malloc(strlen(myline+7)+1) ;
 //                printf("ps_pids[%d] = %p for %d bytes\n", mypid,ps_pids[mypid],strlen(myline+5)+1);
-                  strcpy(ps_pids[mypid],myline+5) ;
+                  // strcpy(ps_pids[mypid],myline+5) ;
+                  strcpy(ps_pids[mypid],myline+7) ;
 //                printf("pid = %d\t", mypid);   // DEBUG
 //                printf("cmd = --%s--\n",ps_pids[mypid]);
                }
@@ -264,6 +273,8 @@ void setup(int phase)
 
 int get_suspicious_pids(int pid_num)
 {
+   //printf("in : %s\n", __func__) ;
+
    int pid_min, pid_max, my_pid ;
    int pid_exists[N_SCHED_RR_GET_INTERVAL+1];
    char mypath[50] ;
@@ -303,19 +314,23 @@ int get_suspicious_pids(int pid_num)
 
       pid_min = 1 ;
       pid_max = maxpid ;
+      printf("pid_max : %0d\n", pid_max) ;
+
    }
    else
       pid_min = pid_max = pid_num ;
 
    for (my_pid = pid_min ; my_pid <= pid_max; my_pid++)
    {
-//      printf("pid_min = %d, pid_max = %d, my_pid = %d\n", pid_min, pid_max, my_pid) ;
+      // printf("pid_min = %d, pid_max = %d, my_pid = %d\n", pid_min, pid_max, my_pid) ;
    // ps
+      // printf("in : %s ps\n", __func__) ;
       if (ps_pids[my_pid] != NULL)
          pid_exists[N_PS] = TRUE ;
       else
          pid_exists[N_PS] = FALSE ;
    // proc
+      // printf("in : %s proc\n", __func__) ;
       sprintf(mypath,"/proc/%d",my_pid);
       statuscmd = stat(mypath, &buffer) ;
       if ((statuscmd == 0) && S_ISDIR(buffer.st_mode))
@@ -339,17 +354,20 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_PROC] = FALSE ;
       }
    // proc/#/task
+      // printf("in : %s proc/#/task\n", __func__) ;
       if (proc_tasks[my_pid] != NULL)
          pid_exists[N_PROC_TASK] = TRUE ;
       else
          pid_exists[N_PROC_TASK] = FALSE ;
 
    // proc_parent
+      // printf("in : %s proc_parent\n", __func__) ;
       if (proc_parent_pids[my_pid] != 0)
          pid_exists[N_PROC_PARENT] = TRUE ;
       else
          pid_exists[N_PROC_PARENT] = UNKNOWN ;
    // getsid()
+      // printf("in : %s getsid\n", __func__) ;
       if (-1 != getsid(my_pid))
       {
          pid_exists[N_GETSID] = TRUE ;
@@ -359,6 +377,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_GETSID] = FALSE ;
       }
    // getpgid()
+      // printf("in : %s getpgid\n", __func__) ;
       if (-1 != getpgid(my_pid))
       {
          pid_exists[N_GET_PGID] = TRUE ;
@@ -368,6 +387,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_GET_PGID] = FALSE ;
       }
    // getpriority()
+      // printf("in : %s getpriority\n", __func__) ;
       if (-1 != getpriority(PRIO_PROCESS, my_pid))
       {
          pid_exists[N_GETPRIORITY] = TRUE ;
@@ -377,6 +397,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_GETPRIORITY] = FALSE ;
       }
    // sched_getparam()
+      // printf("in : %s sched_getparam\n", __func__) ;
       if (-1 != sched_getparam(my_pid, &param))
       {
          pid_exists[N_SCHED_GETPARAM] = TRUE ;
@@ -386,6 +407,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_SCHED_GETPARAM] = FALSE ;
       }
     // sched_getaffinity()
+      // printf("in : %s sched_getaffinity\n", __func__) ;
       if (-1 != sched_getaffinity(my_pid, sizeof(cpu_set_t), &mask))
       {
          pid_exists[N_SCHED_GETAFFINITY] = TRUE ;
@@ -395,6 +417,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_SCHED_GETAFFINITY] = FALSE ;
       }
     // sched_getscheduler()
+      // printf("in : %s sched_getscheduler\n", __func__) ;
       if (-1 != sched_getscheduler(my_pid))
       {
          pid_exists[N_SCHED_GETSCHEDULER] = TRUE ;
@@ -404,6 +427,7 @@ int get_suspicious_pids(int pid_num)
          pid_exists[N_SCHED_GETSCHEDULER] = FALSE ;
       }
     // sched_rr_get_interval()
+      // printf("in : %s sched_rr_get_interval\n", __func__) ;
       if (-1 != sched_rr_get_interval(my_pid, &tp))
       {
          pid_exists[N_SCHED_RR_GET_INTERVAL] = TRUE ;
@@ -475,7 +499,7 @@ int get_suspicious_pids(int pid_num)
                   strcpy(description, proc_exe) ;
                }
             }
-            sprintf(scratch, "\n  %s %s%s", (pid_exists[index] ? "Seen by" : "Not seen by"), pid_detectors[index], description) ;
+            sprintf(scratch, "\n  %s %s %s", (pid_exists[index] ? "Seen by" : "Not seen by"), pid_detectors[index], description) ;
             strcat(message, scratch) ;
          }
 //         puts(message) ;  //DEBUG
@@ -502,13 +526,35 @@ int main (int argc, char *argv[])
    int found_something = FALSE ;
    int phase1_ko = FALSE ;
 
-	strncpy(scratch,"Unhide_rb 20210124\n", sizeof(scratch)-1) ;
+	strncpy(scratch,"Unhide_rb 20211016\n", sizeof(scratch)-1) ;
 
 	strncat(scratch, "Copyright © 2013-2021 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "NOTE : This version of unhide_rb is for systems using Linux >= 2.6 \n\n", sizeof(scratch)-strlen(scratch)-1);
-   scratch[999] = 0 ;
+	strncat(scratch, "WARNING : \n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "TL;DR : This tool is a P.O.F. (proof of fake).\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "        DON'T USE IT for serious work.\n\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " Back in time, the Dev of unhide.rb pretends that his tool, written in ruby\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " do the same checks that unhide-linux, which is written in C, but is 10 times faster.\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " This was evidently false:\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb makes less tests,\n", sizeof(scratch)-strlen(scratch)-1);   
+	strncat(scratch, " - unhide.rb tests are less accurate,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb displays only displays minimal information about hidden processes,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb find lot of false positives when processes number is high,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb find lot of false positives when there are short live processes,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb don't log results of tests,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - and so on.\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " In order to verify assertion about speed, I backported unhide.rb to C language,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " in the more straight/dummy way:\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " No optimisation, translation from line to line, exactly the same tests and treatments.\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " The result is native unhide_rb.\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " It is ONE THOUSAND times faster that the original ruby unhide.rb\n\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " So, don't rely neither on unhide.rb nor on unhide_rb, they are just toys ! \n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " For a quick but quite accurate test, use the command 'unhide-linux quick reverse'\n\n", sizeof(scratch)-strlen(scratch)-1);
+         
+   
+   scratch[1499] = 0 ;
 	fputs(scratch, stdout);
    fflush(stdout) ;
 
@@ -516,6 +562,7 @@ int main (int argc, char *argv[])
    if(getuid() != 0){
       printf("You must be root to run %s !\n", argv[0]) ;
       fflush(stdout) ;
+      exit(1);
    }
 
 
@@ -547,6 +594,7 @@ int main (int argc, char *argv[])
       fflush(stdout) ;
    }
 
+   puts ("Phase 1...") ;
    phase1_ko = get_suspicious_pids(-1) ;
 // re-initializing memory pointers (were used as boolean in setup() phase 1)
    for (i = 0 ; i < maxpid; i++)
@@ -556,6 +604,7 @@ int main (int argc, char *argv[])
    }
    if (TRUE == phase1_ko)
    {
+      puts ("Phase 2...") ;
       setup(2);
       for (i=1; i<maxpid; i++)
       {
