@@ -28,6 +28,7 @@ unhide_rb.c
 unhide-tcp.c
 unhide-tcp-fast.c
 unhide-tcp.h
+ToolTip.py
 unhideGui.py
 LICENSE
 build_all.sh
