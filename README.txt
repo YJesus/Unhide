@@ -15,7 +15,7 @@ Detecting hidden processes. Implements six main techniques
 
 3- Compare info gathered from /bin/ps with info gathered from syscalls (syscall scanning).
 
-4- Full PIDs space ocupation (PIDs bruteforcing). ONLY for unhide-linux version
+4- Full PIDs space occupation (PIDs bruteforcing). ONLY for unhide-linux version
 
 5- Compare /bin/ps output vs /proc, procfs walking and syscall. ONLY for unhide-linux version
    Reverse search, verify that all thread seen by ps are also seen in the kernel.
