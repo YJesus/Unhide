@@ -288,10 +288,10 @@ def RunCmd_2() :
         OutputMsg = Text(Line1)
         OutputMsg.grid(row = 0, column = 0, sticky = 'nsew')
         
-        Outbutton = Button(Line2, text="Fermer", command = delOutput)
+        Outbutton = Button(Line2, text="Close", command = delOutput)
         Outbutton.grid(row = 1, column = 0, sticky = 'nw')
         
-        Clearbutton = Button(Line2, text="Effacer", command = lambda OutputMsg = OutputMsg : OutputMsg.delete(1.0, END))
+        Clearbutton = Button(Line2, text="Clear", command = lambda OutputMsg = OutputMsg : OutputMsg.delete(1.0, END))
         Clearbutton.grid(row = 1, column = 1, sticky = 'nw')
 
         S = Scrollbar(Line1)
@@ -300,7 +300,7 @@ def RunCmd_2() :
 
         S.config(command = OutputMsg.yview)
         OutputMsg.config(yscrollcommand = S.set)
-        OutputMsg.insert(END, 'Bientôt la sortie\n\n')
+        OutputMsg.insert(END, 'Coming soon\n\n')
         OutputWindow.update()
 
     p = subprocess.Popen(UnhCommand, universal_newlines = True, bufsize = 1 , stdout = subprocess.PIPE)
