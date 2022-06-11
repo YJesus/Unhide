@@ -182,3 +182,9 @@ François Boisson pour l'idée de la double vérification dans le test "brute".
 Leandro Lucarella (leandro.lucarella@sociomantic.com) pour la méthode rapide de balayage et son travail de factorisation de unhide-tcp
 
 Nikos Ntarmos (ntarmos@ceid.upatras.gr) pour son aide inestimable pour le portage de unhide-tcp sur FreeBSD.
+
+Fubin Zhang (zfb132 on GitHub) for reporting missing file in distribution tarball.
+
+Buo-ren, Lin (brlin-tw in GitHub ; Buo.Ren.Lin@gmail.com) for fixing typo in Readme file
+
+daichifukui (a.dog.will.talk@akane.waseda.jp) for pinpoint untranslated strings in GUI and fix them.

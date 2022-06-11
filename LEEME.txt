@@ -168,3 +168,9 @@ François Boisson por su idea de un doble control en el test 'brute'
 Leandro Lucarella (leandro.lucarella@sociomantic.com) por el modo de escaneo rápido y la re-escritura de unhide-tcp
 
 Nikos Ntarmos (ntarmos@ceid.upatras.gr) Por su inestimable labor ayudando a portar Unhide a FreeBSD y por hacer el empaquetado para FreeBSD.
+
+Fubin Zhang (zfb132 on GitHub) for reporting missing file in distribution tarball.
+
+Buo-ren, Lin (brlin-tw in GitHub ; Buo.Ren.Lin@gmail.com) for fixing typo in Readme file
+
+daichifukui (a.dog.will.talk@akane.waseda.jp) for pinpoint untranslated strings in GUI and fix them.

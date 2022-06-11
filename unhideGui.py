@@ -1,7 +1,7 @@
 #!/bin/python3
 
 """
-Copyright © 2010-2021 Patrick Gouin
+Copyright © 2020-2022 Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 __author__ = "Patrick Gouin"
-__copyright__ = "Copyright 2021, Patrick Gouin"
-__credits__ = []
+__copyright__ = "Copyright 2020-2022, Patrick Gouin"
+__credits__ = [daichifukui]
 __license__ = "GPL V3"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = "Patrick Gouin"
 __email__ = "patrickg.github@free.fr"
 __status__ = "Production"

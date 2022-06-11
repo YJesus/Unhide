@@ -2,7 +2,8 @@ Changes since 20210124 :
 **********************
 
 BUG FIXES
-  - Correct two typo in english man pages
+  - Add missing file tooltip.py (reported by Fubin Zhang)
+  - Correct two typo in english man pages (report and fix by Buo-ren, Lin)
   - Dirty hacks in unhide_rb to increase the max number of PID so it doesn't crash in 64 bits systems.
 
 ENHANCEMENTS
@@ -10,11 +11,14 @@ ENHANCEMENTS
   - unhide-linux and unhide-posix: set the default value of max_pid to 8388608.
   
 GUI
-  - N/A
+  - Translate 3 messages which were let in French (report and fix by daichifukui)
+  
 
 MISCELLANOUS
   - Update README.txt (build instructions and some document layout)
   - Clearly indicate in its display header of unhide_rb that it SHOULD NOT be used for serious work.
+  - Change links in man pages from SourceForge to GitHub, update e-mails addresses, correct some formatting errors
+  - Complete contributors list in README/LEEME/LISEZ-MOI
 
 
 Changes since 20130526 :
