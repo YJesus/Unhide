@@ -1,3 +1,10 @@
+Changes since v20220611 :
+***********************
+
+BUG FIXES
+  - Add missing missing double quotes in __credit__ list of unhideGui.py (reported by Afzal sulaiman)
+
+
 Changes since 20210124 :
 **********************
 
