@@ -1,3 +1,57 @@
+2024-05
+  
+  README.txt, LISEZMOI.txt and LEEME.txt
+  - Add option -Wextra to build instruction.
+
+  unhide.8, unhide-tcp.8, fr/unhide.8, fr/unhide-tcp.8, es/unhide.8, es/unhide-tcp.8 
+  - add mising escpe of dash char. They're needed for recent version of Groff-man macros as they are no more automacically escaped.
+  - update reference date of man pages.
+
+  sanity.sh
+  - Add new tests for testing new fixes.
+  - minors typo corrections of output texts and comments
+  - update © date.
+  
+  unhide-linux-bruteforce.c
+  - Add "__attribute__ ((unused))" to functionThread (void *parametro) in order to suppress -Wextra warning.
+  - Transform allpids and allpids2 variables from brute() function to globals to suppress -Wextra warning (using volatile doesn't work in this case).
+  
+  unhide-linux-compound.c
+  - Replace use of fgets() by call to getline() in order to be able to parse process cmdline of more than 1024 char with digit at 1024th position. (reported by @basak from Ubuntu packaging team).
+  - Fix a buffer overflow detected thanks to the above modification. Previously, the overflow only overwrites stack data which are no more used. It happened only when a process has a PID > 999999. 
+  - Fix error checking of atol().
+  - Add a check to see if the PID is a numerical value, else display a warning (if verbose mode)
+  - Clarify some warning messages.
+  - Increase LWP string in checkallreverse() to accept 32bits PID (20 bits previously)
+  
+  unhide-linux-procfs.c
+  - Add precision (max legth) to %s in format strings to suppress -Wextra warning.
+  - Remove "pragma GCC diagnostic ignored "-Wformat-overflow"
+  
+  unhide-linux.c
+  - Update Copyright notice and version header.
+  - Replace use of fgets() by call to getline() in printbadpid(): display of cmdline could be truncated if their length was > 1023.
+  - Double the size of the buffer used with readlink(): 2000 char, hoping it's enough for all paths :). if not readlink truncates the path to 2000 char.
+  - Clarify some messages.
+  - In case of unknown arg on command line, indicate which one it is in error message.
+
+  unhide-posix.c
+  - Update Copyright notice and version header.
+
+  unhide-tcp.c
+  - Update Copyright notice and version header.
+
+  unhideGui.py
+  - Add a comment with alternative shebang as some distrib don't soft link /bin to /usr/bin. 
+  - Fix search of single test in test group (generate a tkinter exeption, but work anyway).
+  - Search path of unhide-linux / unhide-tcp executables instead of forcing "./" as path.
+  
+  unhide_rb.c
+  - Update Copyright notice and version header.
+  - Fix some typo in displayed header.
+  - Indicate unhibe_rb is no more maintained and must not be used for serious work.
+
+  
 2021-01
   unhide-linux-procfs.c
   - Suppress -Wformat-overflow warning by GCC >= 8.0 in function checkreaddir().

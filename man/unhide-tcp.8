@@ -1,4 +1,4 @@
-.TH "UNHIDE-TCP" "8" "June 2022" "Administration commands"
+.TH "UNHIDE-TCP" "8" "May 2024" "Administration commands"
 .SH "NAME"
 unhide-tcp \(em forensic tool to find hidden TCP/UDP ports
 .SH "SYNOPSIS"
@@ -13,40 +13,40 @@ TCP/UDP ports available.
 .br
 Note1 : On FreeBSD ans OpenBSD, netstat is always used as iproute2 doesn't exist
 on these OS. In addition, on FreeBSD, sockstat is used instead of fuser.
-Note2 : If iproute2 is not available on the system, option -n or -s SHOULD be
+Note2 : If iproute2 is not available on the system, option \-n or \-s SHOULD be
 given on the command line.
 .PP
 .SH "OPTIONS"
 .TP
-\fB\-h --help\fR
+\fB\-h \-\-help\fR
 Display help
 .TP
-\fB\--brief\fR
+\fB\-\-brief\fR
 Don't display warning messages, that's the default behavior.
 .TP
-\fB\-f --fuser\fR
+\fB\-f \-\-fuser\fR
 Display fuser output (if available) for the hidden port
 On FreeBSD, instead of fuser command, displays the output of the sockstat command for the hidden port.
 .TP
-\fB\-l --lsof\fR
+\fB\-l \-\-lsof\fR
 Display lsof output (if available) for the hidden port
 .TP
-\fB\-n --netstat\fR
+\fB\-n \-\-netstat\fR
 Use /bin/netstat instead of /sbin/ss. On system with many opened ports, this can
 slow down the test dramatically.
 .TP
-\fB\-s --server\fR
+\fB\-s \-\-server\fR
 Use a very quick strategy of scanning. On system with a lot of opened ports,
 it is hundreds times faster than ss method and ten thousands times faster than
 netstat method.
 .TP
-\fB\-o --log\fR
+\fB\-o \-\-log\fR
 Write a log file (unhide-tcp-AAAA-MM-DD.log) in the current directory.
 .TP
-\fB\-V --version\fR
+\fB\-V \-\-version\fR
 Show version and exit
 .TP
-\fB\-v --verbose\fR
+\fB\-v \-\-verbose\fR
 Be verbose, display warning message (default : don't display).
 This option may be repeated more than once.
 .PP

@@ -1,7 +1,8 @@
 #!/bin/python3
+# #!/usr/bin/python3
 
 """
-Copyright © 2020-2022 Patrick Gouin
+Copyright © 2020-2024 Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 __author__ = "Patrick Gouin"
-__copyright__ = "Copyright 2020-2022, Patrick Gouin"
+__copyright__ = "Copyright 2020-2024, Patrick Gouin"
 __credits__ = ["daichifukui", "Afzal sulaiman"]
 __license__ = "GPL V3"
-__version__ = "1.2"
+__version__ = "1.3"
 __maintainer__ = "Patrick Gouin"
 __email__ = "patrickg.github@free.fr"
 __status__ = "Production"
@@ -129,7 +130,6 @@ def CheckCtest(idx) :
     ctest_state = CTestBut[idx][VARB].get()
     if ctest_state == '1':
         if ctest in TestGroupList :
-            print('Ctest in TestGroupList')
             for etest in TestGroupList[ctest] :
                 for count, l in enumerate(ElementaryTestsList) :
                     if etest in l :
@@ -170,7 +170,11 @@ def CheckEtest(idx) :
                     if ETestBut[idx_e][VARB].get() == '1' :
                         nb += 1
                 if nb == len(TestGroupList[key]) :
-                    idx_c = StandardTestsList.index(key)
+#                    idx_c = StandardTestsList.index(key)
+                    for count, l in enumerate(StandardTestsList) :
+                        if key in l :
+                            idx_c = count
+                            break
                     CTestBut[idx_c][VARB].set(1)
     GenCmd()
 
@@ -187,7 +191,7 @@ def TabEvent(event) :
     
 
 def GenCmd() :
-    Cmd = './unhide-linux '
+    Cmd = unhPath
     idx = 0
     for opt in OptionBut :
         if opt[VARB].get() == '1' :
@@ -209,7 +213,7 @@ def GenCmd() :
     CmdText.config(width = len(Cmd))
         
 def GenTcpCmd() :
-    Cmd = './unhide-tcp '
+    Cmd = unhtcpPath
     idx = 0
     for opt in TcpOptionBut :
         if opt[VARB].get() == '1' :
@@ -455,6 +459,22 @@ UCmdFrame.grid_columnconfigure(3, weight=1)
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 root.geometry('+%d+%d' % (screen_width/3, screen_height/3))
+
+# look for unhide path
+# we prefer the local version
+if os.path.exists("./unhide-linux") :
+    unhPath = "./unhide-linux "
+elif os.path.exists("./sbin/unhide-linux") :
+    unhPath = "./sbin/unhide-linux "
+else :
+    unhPath = "./usr/sbin/unhide-linux "
+
+if os.path.exists("./unhide-tcp") :
+    unhtcpPath = "./unhide-tcp "
+elif os.path.exists("./sbin/unhide-tcp") :
+    unhtcpPath = "./sbin/unhide-tcp "
+else :
+    unhtcpPath = "./usr/sbin/unhide-tcp "
 
 
 root.update()

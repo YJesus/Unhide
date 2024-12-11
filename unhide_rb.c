@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -526,31 +526,32 @@ int main (int argc, char *argv[])
    int found_something = FALSE ;
    int phase1_ko = FALSE ;
 
-	strncpy(scratch,"Unhide_rb 20211016\n", sizeof(scratch)-1) ;
+	strncpy(scratch,"Unhide_rb 20240509\n", sizeof(scratch)-1) ;
 
-	strncat(scratch, "Copyright © 2013-2021 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "Copyright © 2013-2024 Yago Jesus & Patrick Gouin\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "License GPLv3+ : GNU GPL version 3 or later\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "http://www.unhide-forensics.info\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "NOTE : This version of unhide_rb is for systems using Linux >= 2.6 \n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "WARNING : \n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "TL;DR : This tool is a P.O.F. (proof of fake).\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, "        It's not maintained any more.\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, "        DON'T USE IT for serious work.\n\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " Back in time, the Dev of unhide.rb pretends that his tool, written in ruby\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " do the same checks that unhide-linux, which is written in C, but is 10 times faster.\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " This was evidently false:\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " - unhide.rb makes less tests,\n", sizeof(scratch)-strlen(scratch)-1);   
 	strncat(scratch, " - unhide.rb tests are less accurate,\n", sizeof(scratch)-strlen(scratch)-1);
-	strncat(scratch, " - unhide.rb displays only displays minimal information about hidden processes,\n", sizeof(scratch)-strlen(scratch)-1);
-	strncat(scratch, " - unhide.rb find lot of false positives when processes number is high,\n", sizeof(scratch)-strlen(scratch)-1);
-	strncat(scratch, " - unhide.rb find lot of false positives when there are short live processes,\n", sizeof(scratch)-strlen(scratch)-1);
-	strncat(scratch, " - unhide.rb don't log results of tests,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb  only outputs minimal information about hidden processes,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb finds lot of false positives when processes number is high,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb finds lot of false positives when there are short live processes,\n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " - unhide.rb doesn't log results of tests,\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " - and so on.\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " In order to verify assertion about speed, I backported unhide.rb to C language,\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " in the more straight/dummy way:\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " No optimisation, translation from line to line, exactly the same tests and treatments.\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " The result is native unhide_rb.\n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " It is ONE THOUSAND times faster that the original ruby unhide.rb\n\n", sizeof(scratch)-strlen(scratch)-1);
-	strncat(scratch, " So, don't rely neither on unhide.rb nor on unhide_rb, they are just toys ! \n", sizeof(scratch)-strlen(scratch)-1);
+	strncat(scratch, " SO, DON'T RELY NEITHER ON UNHIDE.RB NOR ON UNHIDE_RB, THEY ARE JUST TOYS ! \n", sizeof(scratch)-strlen(scratch)-1);
 	strncat(scratch, " For a quick but quite accurate test, use the command 'unhide-linux quick reverse'\n\n", sizeof(scratch)-strlen(scratch)-1);
          
    

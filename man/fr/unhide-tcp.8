@@ -1,4 +1,4 @@
-.TH "UNHIDE-TCP" "8" "Juin 2022" "Commandes d'administration"
+.TH "UNHIDE-TCP" "8" "Mai 2024" "Commandes d'administration"
 .SH "NOM"
 unhide-tcp \(em outil d'investigation post-mortem pour trouver des ports TCP/UDP cachés
 .SH "SYNOPSIS"
@@ -13,7 +13,7 @@ tous les ports TCP/UDP existants.
 .br
 Note1 : sur FreeBSD et OPENBSD, netstat est systématiquement utilisé iproute2 n'existant pas
 sur ces systèmes. De plus sur FreeBSD, sockstat est utilisé à la place de fuser.
-Note2 : si iproute2 n'est pas installé sur le système, une des option -n ou - s
+Note2 : si iproute2 n'est pas installé sur le système, une des option \-n ou \-s
 DOIT être utilisée sur la ligne de commande.
 .PP
 .SH "OPTIONS"
@@ -21,32 +21,32 @@ DOIT être utilisée sur la ligne de commande.
 \fB\-h\fR
 Affiche l'aide.
 .TP
-\fB\--brief\fR
+\fB\\-\-brief\fR
 N'affiche pas les messages d'avertissement, c'est le comportement par défaut.
 .TP
-\fB\-f --fuser\fR
+\fB\-f \-\-fuser\fR
 Affiche la sortie de fuser (si elle est disponible) pour les ports cachés.
 Sur FreeBSD, affiche, à la place, la sortie de sockstat pour les ports cachés.
 .TP
-\fB\-l --lsof\fR
+\fB\-l \-\-lsof\fR
 Affiche la sortie de lsof (si elle est disponible) pour les ports cachés.
 .TP
-\fB\-n --netstat\fR
+\fB\-n \-\-netstat\fR
 Utilise /bin/netstat au lieu de /sbin/ss. Sur les systèmes où un grand nombre de ports sont ouverts,
 cela peut ralentir le test de façon dramatique.
 .TP
-\fB\-o --log\fR
+\fB\-o \-\-log\fR
 Enregistre les sorties dans un fichier de log (unhide-tcp-AAAA-MM-JJ.log) situé dans le répertoire courant.
 .TP
-\fB\-s --server\fR
+\fB\-s \-\-server\fR
 Utilise une stratégie d'analyse très rapide. Sur un système avec un très grand nombre de ports ouverts,
 c'est des centaines de fois plus rapide que la méthode ss et des dizaines de milliers de fois plus rapide que
 la méthode netstat.
 .TP
-\fB\-V --version\fR
+\fB\-V \-\-version\fR
 Affiche la version et sort
 .TP
-\fB\-v --verbose\fR
+\fB\-v \-\-verbose\fR
 Affichage prolixe, affiche les message d'avertissement (par défaut : ne pas afficher).
 .PP
 .SS "Exit status:"

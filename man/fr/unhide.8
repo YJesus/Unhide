@@ -1,4 +1,4 @@
-.TH "unhide" "8" "Juin 2022" "Commandes d'administration"
+.TH "unhide" "8" "Mai 2024" "Commandes d'administration"
 .SH "NOM"
 unhide \(em outil d'investigation post\-mortem pour trouver des processus cachés
 .SH "SYNOPSIS"
@@ -16,28 +16,28 @@ détecte les processus cachés en utilisant six techniques principales.
 .PP
 Les options sont uniquement disponibles pour \fBunhide-linux\fR pas pour \fBunhide-posix\fR.
 .TP
-\fB \-d\fR
+\fB\-d\fR
 Effectue un double contrôle dans le test 'brute' pour diminuer l'occurence des faux positifs.
 .TP
-\fB \-f\fR
+\fB\-f\fR
 Enregistre les sorties dans un fichier de log (unhide-linux.log) situé dans le répertoire courant.
 .TP
-\fB \-h\fR
+\fB\-h\fR
 Affichage de l'aide.
 .TP
-\fB \-m\fR
+\fB\-m\fR
 Exécute des contrôles supplémentaires. Pour la version 2012\-03\-17, cette option n'a
 d''effet pour les tests procfs, procall, checkopendir et checkchdir.
 .br
 Elle implique l'option \-v.
 .TP
-\fB \-r\fR
+\fB\-r\fR
 Utilise une version alternative du test sysinfo lors du lancement d'un test standard.
 .TP
-\fB \-V\fR
+\fB\-V\fR
 Affiche la version et sort.
 .TP
-\fB \-v\fR
+\fB\-v\fR
 Affichage prolixe, affiche les message d'avertissement (par défaut : ne pas afficher).
 Cette option peut être répétée plus d'une fois.
 .TP
@@ -86,7 +86,7 @@ Cette technique n'est disponible qu'avec la version unhide\-linux.
 .PP
 La technique \fIreverse\fR consiste à vérifier que tous les threads vus par /bin/ps
 sont également vus dans le procfs et par les appels système. C'est une recherche
-inversée. Elle est destiné à vérifier qu'un rootkit n'a pas tué un outil de sécurité
+inversée. Elle est destiné à vérifier qu'un rootkit n'a pas tué un outil de sécurité 
 (IDS ou autre) et modifié /bin/ps pour lui faire afficher un faux processus à la place.
 .br
 Cette technique n'est disponible qu'avec la version unhide\-linux.
@@ -222,7 +222,7 @@ Test standard :
 unhide sys proc
 .TP
 Test le plus complet :
-unhide -m -d sys procall brute reverse
+unhide \-m \-d sys procall brute reverse
 .SH "BUGS"
 .PP
 Rapportez les bugs de \fBunhide\fR sur le bug tracker de GitHub (https://github.com/YJesus/Unhide/issues)

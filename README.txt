@@ -118,7 +118,7 @@ man/fr/unhide-tcp.8 -- French man page of unhide-tcp
       procps
 
 
-IMPORTANT : Notes that, as a forensic tool, unhide is built statically as the host system libraries may be compromised.
+IMPORTANT : Notes that, as a forensic tool, unhide is built statically as the host system libraries may be compromised and to avoid being fooled by a PRELINKing. 
 
 If you ARE using a Linux kernel >= 2.6
       gcc -Wall -Wextra -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux

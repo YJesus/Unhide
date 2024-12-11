@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

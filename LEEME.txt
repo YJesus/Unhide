@@ -116,11 +116,14 @@ Y las siguientes dependencias:
 unhide-linux, unhide-posix, unhide_rb :
    procps
 
+IMPORTANTE : Tenga en cuenta que, como herramienta forense, unhide se construye estáticamente ya que las librerías del sistema anfitrión pueden estar 
+               comprometidas y para evitar ser engañado por una configuración PRELINKing. 
+
 Si estás usando un kernel de Linux > = 2.6
-   gcc -Wall -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
-   gcc -Wall -O2 --static unhide_rb.c -o unhide_rb
-   gcc -Wall -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c  -o unhide-tcp
-   ln -s unhide unhide-linux
+      gcc -Wall -Wextra -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
+      gcc -Wall -Wextra -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c -o unhide-tcp
+      gcc -Wall -Wextra -O2 --static unhide_rb.c -o unhide_rb
+      ln -s unhide unhide-linux
 
 Si no,(Linux < 2.6, *BSD, Solaris and other Unix)
     gcc --static unhide-posix.c -o unhide-posix

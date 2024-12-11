@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // header
 const char header[] =
-   "Unhide 20211016\n"
-   "Copyright © 2010-2021 Yago Jesus & Patrick Gouin\n"
+   "Unhide 20240509\n"
+   "Copyright © 2010-2024 Yago Jesus & Patrick Gouin\n"
    "License GPLv3+ : GNU GPL version 3 or later\n"
    "http://www.unhide-forensics.info\n\n"
    "NOTE : This version of unhide is for systems using Linux >= 2.6 \n\n";
@@ -279,7 +279,11 @@ void printbadpid (int tmppid)
    char cmd[100] ;
    struct stat buffer;
    FILE *cmdfile ;
-   char cmdcont[1000], fmtstart[128];
+   // char cmdcont[1000], fmtstart[128];
+   char *cmdcont = NULL, fmtstart[128];
+   size_t cmdlen = 0 ;
+   ssize_t readl ;
+   char linkcont[2000];
    int cmdok = 0 ;
 
    found_HP = 1;
@@ -287,7 +291,7 @@ void printbadpid (int tmppid)
    msgln(unlog, 0, "%s", fmtstart) ;
 
    sprintf(cmd,"/proc/%i/cmdline",tmppid);
-
+   
    statuscmd = stat(cmd, &buffer);
 // statuscmd = 0 ;  // DEBUG
 
@@ -296,11 +300,20 @@ void printbadpid (int tmppid)
       cmdfile=fopen (cmd, "r") ;
       if (cmdfile != NULL) 
       {
-         while ((NULL != fgets (cmdcont, 1000, cmdfile)) && 0 == cmdok)
+         ssize_t ret ;
+         while ((-1 != (ret = getline (&cmdcont, &cmdlen, cmdfile))) && 0 == cmdok)
          {
             cmdok++ ;
             msgln(unlog, 0, "\tCmdline: \"%s\"", cmdcont) ;
          }
+
+         free(cmdcont) ;
+         cmdcont = NULL;
+         cmdlen = 0 ;
+
+         if (ret == -1)
+            warnln(verbose, unlog, "Something went wrong with getline reading pipe") ;
+
          fclose(cmdfile);
       }
    }
@@ -319,13 +332,13 @@ void printbadpid (int tmppid)
       {
          ssize_t length ;
 
-         length = readlink(cmd, cmdcont, 1000) ;
+         length = readlink(cmd, linkcont, 2000) ;
          // printf("\tLength : %0d\n",(int)length) ; //DEBUG
          if (-1 != length) 
          {
-            cmdcont[length] = 0;   // terminate the string
+            linkcont[length] = 0;   // terminate the string
             cmdok++;
-            msgln(unlog, 0, "\tExecutable: \"%s\"", cmdcont) ;
+            msgln(unlog, 0, "\tExecutable: \"%s\"", linkcont) ;
          }
          else
          {
@@ -349,17 +362,17 @@ void printbadpid (int tmppid)
             int cmdok2 = 0 ;
 
             // printf("\tCmdFile : %s\n",cmd) ; //DEBUG
-            while ((NULL != fgets (cmdcont, 1000, cmdfile)) && 0 == cmdok2) 
+            while ((-1 != (readl = getline (&cmdcont, &cmdlen, cmdfile))) && 0 == cmdok2) 
             {
                // EXPLAIN-ME : why do we use a while and then read only one line ?
                cmdok2++; 
                
                // printf("\tLastChar : %x\n",cmdcont[strlen(cmdcont)]) ; //DEBUG
-               if (cmdcont[strlen(cmdcont)-1] == '\n')
+               if (cmdcont[readl-1] == '\n')
                {
-                  cmdcont[strlen(cmdcont)-1] = 0 ;  // get rid of newline
+                  cmdcont[readl-1] = 0 ;  // get rid of newline
                }
-               if (0 == cmdok) // it is a kthreed : add brackets
+               if (0 == cmdok) // it is a kthread (no cmdline, no link): add brackets
                {
                   msgln(unlog, 0, "\tCommand: \"[%s]\"", cmdcont) ;
                }
@@ -369,6 +382,11 @@ void printbadpid (int tmppid)
                }
               
             }
+
+            free(cmdcont) ;
+            cmdcont = NULL;
+            cmdlen = 0 ;
+
             fclose(cmdfile);
          }
          else
@@ -378,7 +396,7 @@ void printbadpid (int tmppid)
       }
       else 
       {
-         msgln(unlog, 0, "\t\"<none>  ... maybe a transitory process\"") ;
+         msgln(unlog, 0, "\t\"<No comm file>\"  ... maybe a transitory process\"") ;
       }
    }
    // try to print some useful info about the hidden process
@@ -399,16 +417,20 @@ void printbadpid (int tmppid)
             warnln(verbose, unlog, "\tCouldn't read USER for pid %d", tmppid) ;
          }
 
-         if (NULL != fgets(cmdcont, 30, fich_tmp)) 
+         if (-1 != (readl = getline (&cmdcont, &cmdlen, fich_tmp)))
          {
-            cmdcont[strlen(cmdcont)-1] = 0 ;  // get rid of newline
+            cmdcont[readl-1] = 0 ;  // get rid of newline
             msgln(unlog, 0, "\t$%s", cmdcont) ;
          }
          else
          {
-            msgln(unlog, 0, "\t$USER=<undefined>", cmdcont) ;
+            // msgln(unlog, 0, "\t$USER=<undefined>", cmdcont) ;
+            msgln(unlog, 0, "\t$USER=<undefined>") ;
          }
-         pclose(fich_tmp);
+         free(cmdcont) ;
+         cmdcont = NULL ;
+         cmdlen = 0 ;
+         pclose(fich_tmp) ;
 
          sprintf(cmd,"cat /proc/%i/environ | tr \"\\0\" \"\\n\" | grep -w 'PWD'",tmppid) ;
          // printf(cmd) ;
@@ -418,15 +440,19 @@ void printbadpid (int tmppid)
             warnln(verbose, unlog, "\tCouldn't read PWD for pid %d", tmppid) ;
          }
 
-         if (NULL != fgets(cmdcont, 30, fich_tmp)) 
+         if (-1 != (readl = getline (&cmdcont, &cmdlen, fich_tmp))) 
          {
-            cmdcont[strlen(cmdcont)-1] = 0 ;  // get rid of newline
+            cmdcont[readl-1] = 0 ;  // get rid of newline
             msgln(unlog, 0, "\t$%s", cmdcont) ;
          }
          else
          {
-            msgln(unlog, 0, "\t$PWD=<undefined>", cmdcont) ;
+            // msgln(unlog, 0, "\t$PWD=<undefined>", cmdcont) ;
+            msgln(unlog, 0, "\t$PWD=<undefined>") ;
          }
+         free(cmdcont) ;
+         cmdcont = NULL;
+         cmdlen = 0 ;
          pclose(fich_tmp);
 
    //      printf("Done !\n");
@@ -731,7 +757,7 @@ void parse_args(int argc, char **argv)
       }
       else 
       { 
-         printf("Unknown argument\n") ; usage(argv[0]); exit(0);
+         printf("Unknown argument: %s\n", argv[index]) ; usage(argv[0]); exit(0);
          fflush(stdout) ;
       }
    }

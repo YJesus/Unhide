@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  Minimalist thread function for brute test.
  *  Set tid with the pid of the created thread. 
  */
-void *functionThread (void *parametro) 
+void *functionThread (__attribute__ ((unused)) void *parametro) 
 {
 
    tid = (pid_t) syscall (SYS_gettid);
@@ -63,11 +63,14 @@ void *functionThread (void *parametro)
  *  pthread_create/pthread_join. All pid which
  *  can't be obtained are check against ps output
  */
+int* allpids ;
+int* allpids2 ;
+
 void brute(void) 
 {
-   int i=0;
-   int* allpids;
-   int* allpids2;
+   volatile int i = 0;
+//   volatile int* allpids = NULL ;
+//   volatile int* allpids2 = NULL ;
    int x;
    int y;
    int z;
@@ -126,7 +129,7 @@ void brute(void)
       // printf("Tested pid : %06d\r", i);
       errno= 0 ;
 
-      if ((vpid = vfork()) == 0) 
+      if ( ( vpid =  vfork() ) == 0) 
       {
          _exit(0);
       }

@@ -2,7 +2,7 @@
 
 #	sanity.sh -- a growing testsuite for unhide.
 #
-# Copyright (C) 2010-2021 Patrick Gouin.
+# Copyright (C) 2010-2024 Patrick Gouin.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,44 +22,6 @@
 # remove pre-existing local ps
 rm -f ./ps
 
-#test 0
-# Call ps, but add a faked process.
-cat <<EOF
-   Test #0
-   Call ps, but add a faked process.
-   This should show "my_false_proc" as faked process
-
-EOF
-cat <<EOF >./ps
-#! /bin/bash
-
-/bin/ps "\$@"
-echo 65535  my_false_proc
-EOF
-chmod 754 ./ps
-PATH=.:$PATH ./unhide-linux -v checksysinfo checksysinfo2
-
-# remove pre-existing local ps
-rm -f ./ps
-# test2
-# Don't call ps : let all processes appear hidden
-cat <<EOF
-   
-   Test #2
-   Don't call ps : let all processes appear hidden.
-   This should find all processes as hidden..
-
-EOF
-cat <<EOF >./ps
-#! /bin/bash
-
-false
-EOF
-chmod 754 ./ps
-PATH=.:$PATH ./unhide-linux procall
-
-# remove pre-existing local ps
-rm -f ./ps
 
 # test 1
 # Call ps, but hide the last line of output
@@ -83,7 +45,8 @@ PATH=.:$PATH ./unhide-linux sys
 
 # remove pre-existing local ps
 rm -f ./ps
-# test2
+
+# test 2
 # Don't call ps : let all processes appear hidden
 cat <<EOF
    
@@ -102,11 +65,33 @@ PATH=.:$PATH ./unhide-linux procall
 
 # remove pre-existing local ps
 rm -f ./ps
-#test 3
+
+# test 3
+# Call ps, but add a faked process.
+cat <<EOF
+   Test #3
+   Call ps, but add a faked process.
+   This should show something like:
+   "1 HIDDEN Process Found        sysinfo.procs reports xxx processes and ps sees xxx-1 processes"
+   But due to the large increase in the number of processes in recent years checksysinfo tests take a very long time.
+   Processes therefore have time to appear and disappear making the tests unreliable.
+
+EOF
+cat <<EOF >./ps
+#! /bin/bash
+
+/bin/ps "\$@"
+echo 65535  my_false_proc
+EOF
+chmod 754 ./ps
+PATH=.:$PATH ./unhide-linux -v checksysinfo checksysinfo2
+
+
+# test 4
 # Call ps, but add a faked process.
 cat <<EOF
    
-   Test #3
+   Test #4
    Call ps, but add a faked process.
    This should show "my_false_proc" as faked process
 
@@ -120,3 +105,70 @@ EOF
 chmod 754 ./ps
 PATH=.:$PATH ./unhide-linux reverse
 
+# remove pre-existing local ps
+rm -f ./ps
+
+# test 5
+# Call ps, but add a faked process.
+cat <<EOF
+   
+   Test #5
+   Call ps, but add a faked process.
+   This should show "my_false_proc" repeated enough times for a length > 1023 as faked process
+
+EOF
+cat <<EOF >./ps
+#! /bin/bash
+
+/bin/ps "\$@"
+echo 65535  my_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_00procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_procmy_false_proc
+EOF
+chmod 754 ./ps
+PATH=.:$PATH ./unhide-linux reverse
+
+# remove pre-existing local ps
+rm -f ./ps
+
+
+# test 6
+# Call ps, but add a faked process.
+cat <<EOF
+   
+   Test #6
+   Call ps, but add a faked process with a non numeric PID
+   This should show: "Warning : No numeric pid found on ps output line, skip line"
+
+EOF
+cat <<EOF >./ps
+#! /bin/bash
+
+/bin/ps "\$@"
+echo abcde bad_proc_number
+EOF
+chmod 754 ./ps
+PATH=.:$PATH ./unhide-linux  -v reverse
+
+
+# test 7
+# Call ps, but add a temporary process.
+# not working
+cat <<EOF
+   
+   Test #7
+   Call ps, but add a temporary process 
+   This should show: "Warning : No numeric pid found on ps output line, skip line"
+   This test does not work.
+
+EOF
+unset UNH_PASSAGE
+cat <<'EOF' >./ps
+#! /bin/bash
+/bin/ps "$@"
+if [[ -z "${UNH_PASSAGE}" ]]; then
+   export UNH_PASSAGE=1
+   echo abcde bad_proc_number
+fi
+
+EOF
+chmod 754 ./ps
+PATH=.:$PATH ./unhide-linux  -v quick

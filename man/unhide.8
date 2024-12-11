@@ -1,4 +1,4 @@
-.TH "UNHIDE" "8" "June 2022" "Administration commands"
+.TH "UNHIDE" "8" "May 2024" "Administration commands"
 .SH "NAME"
 unhide \(em forensic tool to find hidden processes
 .SH "SYNOPSIS"
@@ -29,7 +29,7 @@ Display help
 Do more checks. As of 2012\-03\-17 version, this option has only
 effect for the procfs, procall, checkopendir and checkchdir tests.
 .br
-Implies -v
+Implies \-v
 .TP
 \fB\-r\fR
 Use alternate version of sysinfo check in standard tests
@@ -73,7 +73,7 @@ This technique is only available with version unhide\-linux.
 The \fIprocfs\fR technique consists of comparing information
 gathered from /bin/ps with information gathered by walking in the procfs.
 .br
-With \fB-m\fR option, this test makes more checks, see \fIcheckchdir\fR test.
+With \fB\-m\fR option, this test makes more checks, see \fIcheckchdir\fR test.
 .br
 This technique is only available with version unhide\-linux.
 .PP
@@ -103,7 +103,7 @@ This technique is only available with version unhide\-linux.
 The \fIcheckchdir\fR technique consists of comparing information
 gathered from /bin/ps with information gathered by making chdir() in the procfs.
 .br
-With the \fB-m\fR option, it also verify that the thread appears in its
+With the \fB\-m\fR option, it also verify that the thread appears in its
 "leader process" threads list.
 .br
 This technique is only available with version unhide\-linux.
@@ -224,7 +224,7 @@ Standard test:
 unhide sys proc
 .TP
 Deeper test:
-unhide -m -d sys procall brute reverse
+unhide \-m \-d sys procall brute reverse
 .SH "BUGS"
 .PP
 Report \fBunhide\fR bugs on the bug tracker on GitHub (https://github.com/YJesus/Unhide/issues)

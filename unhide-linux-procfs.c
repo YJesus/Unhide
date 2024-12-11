@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -183,7 +183,7 @@ void checkchdir(void)
             {   // if the thread isn't the master thread (process)
                char  new_directory[100];
 
-               sprintf(new_directory,"/proc/%s/task/%d", tmp_pids, procpids) ;
+               sprintf(new_directory,"/proc/%.10s/task/%d", tmp_pids, procpids) ;
                // count++;    // DEBUG
                // printf("new_dir = %s\n", new_directory);   // DEBUG
                statusdir = chdir(new_directory) ;
@@ -316,7 +316,7 @@ void checkopendir(void)
                char  new_directory[100] ;
                DIR*  statdir;
                
-               sprintf(new_directory,"/proc/%s/task/%d", tmp_pids, procpids) ;
+               sprintf(new_directory,"/proc/%.10s/task/%d", tmp_pids, procpids) ;
                // count++;    // DEBUG
                // printf("new_dir = %s\n", new_directory);   // DEBUG
                // errno = 0;
@@ -401,14 +401,14 @@ void checkreaddir(void)
 
       // Warning here as gcc can't know that directory (task number) contains far less than 94 char.
       // max PID = 2³32 - 1 has  11 digits max
-#ifdef __GNUC__
-   #pragma GCC diagnostic push
-   #pragma GCC diagnostic ignored "-Wformat-overflow="
-#endif
-      sprintf(&task[6], "%s/task", directory) ;
-#ifdef __GNUC__
-   #pragma GCC diagnostic pop
-#endif
+// #ifdef __GNUC__
+//    #pragma GCC diagnostic push
+//    #pragma GCC diagnostic ignored "-Wformat-overflow="
+// #endif
+      sprintf(&task[6], "%.10s/task", directory) ;
+// #ifdef __GNUC__
+//    #pragma GCC diagnostic pop
+// #endif
 //    printf("task : %s", task) ; // DEBUG
       taskdir = opendir(task);
       if (NULL == taskdir) 

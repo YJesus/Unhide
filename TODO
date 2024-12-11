@@ -1,4 +1,8 @@
 [TODO]
+- For Brute force test: add an option to choose the number of checks to do. With the increase of the max process number, duration of brute test becomes very long.
+  So (very) short live processes, appearing and disappearing during the brute test, start to give some false positives even with double check.
+  At least make double check the default.
+  The more the number of runs the less the number of false positives.
 - Integrate -m in other test,
 - Try to factorize the code,
 - More optimizations,

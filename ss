@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2010-2021 Patrick Gouin.
+# Copyright (C) 2010-2024 Patrick Gouin.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

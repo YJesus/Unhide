@@ -3,8 +3,45 @@ Changes since v20220611 :
 
 BUG FIXES
   - Add missing missing double quotes in __credit__ list of unhideGui.py (reported by Afzal sulaiman)
+  - Fix parsing of the outpout of "ps --no-header -eL o lwp,cmd" (REVERSE test) which might cause false positives
+    in some very rare cases if line length is greater than 1023. (reported by @basak from Ubuntu). Replace fgets() with getline()
+  - Fix the same type of error in reading "/proc/PID/cmdline" in hidden process reporting where the displayed cmd line was truncated if longer than 1000.
+  - Fix return checking of atol() function. (reported by @basak from Ubuntu).
+  - Fix lenght of LWP string to accept 32 bit PID. This bug is triggered for PID > 999999 only and has no visible effect before replacing fgets() by getline().
 
+Wextra WARNINGS REMOVAL
+  - Add option -Wextra to build instruction.
+  - Remove "unused parameter" warning in unhide-linux-bruteforce.c:void *functionThread()
+  - Make table pointers global to remove "variable ‘xxx’ might be clobbered by ‘longjmp’ or ‘vfork’" warning.
+  - Use precision specifier in sprintf to avoid useless format-overflow warning
+  - Also build with clang without warnings
 
+ENHANCEMENTS
+  - Add the invalid argument text to "Unknown Argument" message.
+  - Add some tests for last fixes.
+  - Add a few clarifications to the test descriptions 
+  - Clarify some output messsages.
+
+TEST/STATIC ANALYSIS
+  - use of scanbuild with gcc and clang gives 22 warnings:
+      - 2 warnings concerning the use of vfork() : unsafe, possible DDOS --> can't fix: using vfork is the aim of the test :)
+      - 20 warnings about unused initialization value of variables -> won't fix: in my rules all variables are explicitly initialized :)
+
+GUI
+  - Fix a search error in management of group of test commands (threw an exception in a Tkinter event routine, but finally worked as expected by following a convoluted path). 
+  - Search for unhide and unhide-tcp paths instead of use '.' (cwd) : prefered path ./, default path /usr/sbin/ 
+  - Add comment under shebang with alternative path as not all distrib softlink /bin to /usr/bin.
+  - Remove some debug print statement.
+
+HELP FILES
+  - Add "missing" \ (escape) to option dashes. It makes no difference when groff version < 1.23 but it does after (it seems Debian has reverted this change in its version of 
+    groff as it breaks thousands of Linux man pages).
+ 
+MISCELLANEOUS
+  - Add in its displayed header that unhide_rb is unmaintained.
+  - Update version and copyright dates.
+
+  
 Changes since 20210124 :
 **********************
 
@@ -23,7 +60,7 @@ GUI
 
 MISCELLANOUS
   - Update README.txt (build instructions and some document layout)
-  - Clearly indicate in its display header of unhide_rb that it SHOULD NOT be used for serious work.
+  - Clearly indicate in its display header that unhide_rb MUST NOT be used for serious work.
   - Change links in man pages from SourceForge to GitHub, update e-mails addresses, correct some formatting errors
   - Complete contributors list in README/LEEME/LISEZ-MOI
 

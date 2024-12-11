@@ -3,7 +3,7 @@
 */
 
 /*
-Copyright © 2010-2021 Yago Jesus & Patrick Gouin
+Copyright © 2010-2024 Yago Jesus & Patrick Gouin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -88,7 +88,6 @@ void checkallquick(void)
       {
          continue;
       }
-      // printf("syspid = %d\n", syspids); //DEBUG
 
       found=0;
       found_killbefore=0;
@@ -218,7 +217,7 @@ void checkallreverse(void)
 {
 
    int ret;
-   int syspids;
+   long int syspids = 0;
    struct timespec tp;
    struct sched_param param;
    cpu_set_t mask;
@@ -228,8 +227,11 @@ void checkallreverse(void)
    int found_killafter = 0;
    FILE *fich_tmp;
    char command[50];
-   char read_line[1024];
-   char lwp[7];
+   // char read_line[1024];
+   char *read_line = NULL;
+   size_t length = 0 ;
+   ssize_t rlen ;
+   char lwp[11];  // extended to 11 char for 32 bit PID
    int  index;
    char directory[100];
    struct stat buffer;
@@ -257,31 +259,36 @@ void checkallreverse(void)
 
    strcpy(directory,"/proc/");
 
-   while (NULL != fgets(read_line, 1024, fich_tmp)) 
+   // while (NULL != fgets(read_line, 1024, fich_tmp)) 
+   while ((rlen = getline(&read_line, &length, fich_tmp)) != -1)
    {
       char* curline = read_line;
 
-      read_line[1023] = 0;
-      read_line[strlen(read_line)-1] = 0;
 
-//    printf("read_line = %s\n", read_line);   // DEBUG
-      while( *curline == ' ' && curline <= read_line+1023) 
+      read_line[rlen] = 0;
+
+      while( *curline == ' ' && curline <= read_line+rlen) 
       {
          curline++;
       }
 
       // get LWP
       index=0;
-      while( isdigit(*curline) && curline <= read_line+1023) 
+      while( isdigit(*curline) && curline <= read_line+rlen) 
       {
          lwp[index++] = *curline;
          curline++;
-      }
+     }
       lwp[index] = 0; // terminate string
 
-      syspids = -1;
       syspids = atol(lwp);
-      if (-1 == syspids) continue ; // something went wrong
+
+      if (0 == syspids) 
+      {
+          errno = 0 ; // this warning should not display previous old error.
+          warnln(verbose, unlog, "No numeric pid found on ps output line, skip line") ;
+          continue ; // something went wrong
+      }
 
       // avoid ourselves
       if (syspids == mypid) 
@@ -361,7 +368,7 @@ void checkallreverse(void)
       ret = kill(syspids, 0);
       if (errno == 0) found_killafter=1;
 
-//    printf("FK_bef = %d FK_aft = %d not_seen = %d\n",found_killbefore, found_killafter, not_seen);  //DEBUG
+      // printf("FK_bef = %d FK_aft = %d not_seen = %d\n",found_killbefore, found_killafter, not_seen);  //DEBUG
       /* these should all agree, except if a process went or came in the middle */
       if (found_killbefore == found_killafter) 
       {
@@ -372,7 +379,7 @@ void checkallreverse(void)
                if (NULL == strstr(curline, REVERSE)) // avoid our spawn ps
                {  
                   // printbadpid should NOT be used here : we are looking for faked process
-                  msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d sys fonc", syspids, curline, not_seen) ;
+                  msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d system function(s)", syspids, curline, not_seen) ;
                   found_HP = 1;
                   hidenflag = 1 ;
                }
@@ -383,7 +390,7 @@ void checkallreverse(void)
             if (NULL == strstr(curline, REVERSE))  // avoid our spawned ps
             {  
                // printbadpid should NOT be used here : we are looking for faked process
-               msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d sys fonc", syspids, curline, not_seen + 2) ;
+               msgln(unlog, 0, "Found FAKE PID: %i\tCommand = %s not seen by %d system function(s)", syspids, curline, not_seen + 2) ;
                found_HP = 1;
                hidenflag = 1 ;
             }
@@ -395,6 +402,12 @@ void checkallreverse(void)
          warnln(verbose, unlog, "reverse test skipped for PID %d", syspids) ;
       }
    }
+
+      free(read_line) ;
+
+   if (rlen == -1)
+      warnln(verbose, unlog, "Something went wrong with getline reading pipe, reverse test stopped at PID %ld\n", syspids) ;
+   
    if (humanfriendly == TRUE)
    {
       if (hidenflag == 0)

@@ -130,12 +130,14 @@ unhide-linux, unhide-posix, unhide_rb :
    procps
 
 
+IMPORTANT : Il convient de noter qu'en tant qu'outil de police scientifique, unhide est construit de manière statique, car les bibliothèques du système hôte 
+            peuvent être compromises ainsi que pour éviter d'être trompé par un paramètre PRELINKing. 
 
 Si vous utilisez un noyau Linux >= 2.6
-   gcc -Wall -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
-   gcc -Wall -O2 --static unhide_rb.c -o unhide_rb
-   gcc -Wall -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c  -o unhide-tcp
-   ln -s unhide unhide-linux
+      gcc -Wall -Wextra -O2 --static -pthread unhide-linux*.c unhide-output.c -o unhide-linux
+      gcc -Wall -Wextra -O2 --static unhide-tcp.c unhide-tcp-fast.c unhide-output.c -o unhide-tcp
+      gcc -Wall -Wextra -O2 --static unhide_rb.c -o unhide_rb
+      ln -s unhide unhide-linux
 
 Sinon (Linux < 2.6, *BSD, Solaris, etc.)
    gcc --static unhide-posix.c -o unhide-posix
