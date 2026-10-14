@@ -386,7 +386,7 @@ void checkallnoprocps(void)
    int found_killbefore = 0;
    int found_killafter = 0;
 
-   msgln(unlog, 0, "[*]Searching for Hidden processes through  comparison of results of system calls\n") ;
+   msgln(unlog, 0, "[*]Searching for Hidden processes through comparison of results of system calls\n") ;
    for ( syspids = 1; syspids <= maxpid; syspids++ ) 
    {
       // avoid ourselves
